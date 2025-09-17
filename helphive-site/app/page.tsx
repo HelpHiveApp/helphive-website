@@ -1,5 +1,6 @@
 // app/page.tsx (Next.js 13+ with App Router)
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -7,15 +8,22 @@ export default function Home() {
       {/* Hero Section */}
       <section className="flex flex-col items-center justify-center text-center py-20 px-4">
         {/* Logo Placeholder */}
-        <div className="mb-6">
+        {/* <div className="mb-6"> */}
           {/* Replace with your logo */}
-          <div className="h-20 w-20 bg-[#14B8A6] rounded-full flex items-center justify-center text-white font-bold">
-            Logo
+          <div className="h-37 w-37 bg-[#F1F5F9] rounded-full flex items-center justify-center text-white font-bold">
+            <Link href="/">
+              <Image
+                src="/HelpHiveLogo.png" // path relative to /public
+                alt="HelpHive Logo"
+                width={1500}   // adjust as needed
+                height={1500}   // adjust as needed
+              />
+            </Link>
           </div>
-        </div>
+        {/* </div> */}
 
         <h1 className="text-4xl font-bold mb-4">
-          HelpHive – Connecting Work and Opportunity
+          HelpHive<br /><br />Connecting Work and Opportunity
         </h1>
         <p className="text-lg text-[#475569] max-w-xl mb-8">
           A platform that helps workers and hirers connect quickly, easily, and
@@ -65,12 +73,17 @@ export default function Home() {
           </div>
         </div>
         <p className="text-sm">&copy; {new Date().getFullYear()} HelpHive. All rights reserved.</p>
-        <div className="mt-2">
-          <a href="/terms" className="underline text-[#F5C83C] hover:text-[#e6b632]">
-            Terms & Privacy
-          </a>
+        <div className="mt-2 flex justify-center gap-4">
+          <Link href="/legal/terms" className="underline text-[#F5C83C] hover:text-[#e6b632]">
+            Terms
+          </Link>
+          &
+          <Link href="/legal/privacy" className="underline text-[#F5C83C] hover:text-[#e6b632]">
+            Privacy
+          </Link>
         </div>
       </footer>
     </main>
   );
 }
+

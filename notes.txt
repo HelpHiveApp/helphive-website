@@ -1,0 +1,23 @@
+Core Palette
+
+Primary (Teal) → #14B8A6
+
+Accent (Amber) → #F5C83C
+
+Supporting Neutrals
+
+Dark Charcoal (text / headers / footer bg) → #1E293B
+
+Mid Gray (borders / icons / disabled) → #94A3B8
+
+Light Gray (backgrounds / cards) → #F1F5F9
+
+Elevation / Depth
+
+Off-White (base background) → #FAFAFA
+
+Soft Shadow Gray (hover / pressed states) → #CBD5E1
+
+Optional Secondary
+
+Slate Blue (optional trust color for links / highlights) → #3B82F6

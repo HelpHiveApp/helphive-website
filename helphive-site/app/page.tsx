@@ -17,7 +17,7 @@ export default function Home() {
   const [predictions, setPredictions] = useState<PlacePrediction[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [showPredictions, setShowPredictions] = useState(false);
-  const debounceRef = useRef<NodeJS.Timeout>();
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
   // You'll need to implement this function to get the current user email
   const getCurrentUserEmail = () => {

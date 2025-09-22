@@ -2,13 +2,38 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Core Palette */
+  --primary: #14B8A6;
+  --accent: #F5C83C;
+  
+  /* Supporting Neutrals */
+  --dark-charcoal: #1E293B;
+  --mid-gray: #94A3B8;
+  --light-gray: #F1F5F9;
+  
+  /* Elevation / Depth */
+  --off-white: #FAFAFA;
+  --soft-shadow-gray: #CBD5E1;
+  
+  /* Optional Secondary */
+  --slate-blue: #3B82F6;
+  
+  /* Legacy variables for compatibility */
+  --background: var(--off-white);
+  --foreground: var(--dark-charcoal);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-accent: var(--accent);
+  --color-dark-charcoal: var(--dark-charcoal);
+  --color-mid-gray: var(--mid-gray);
+  --color-light-gray: var(--light-gray);
+  --color-off-white: var(--off-white);
+  --color-soft-shadow-gray: var(--soft-shadow-gray);
+  --color-slate-blue: var(--slate-blue);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-ubuntu: Ubuntu, sans-serif;
@@ -16,8 +41,9 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* Keep the same colors for dark mode - adjust if needed */
+    --background: var(--dark-charcoal);
+    --foreground: var(--off-white);
   }
 }
 
@@ -25,4 +51,25 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Custom button and link hover styles */
+.nav-button {
+  background-color: var(--accent);
+  color: black;
+  transition: background-color 0.2s ease;
+}
+
+.nav-button:hover {
+  background-color: var(--soft-shadow-gray);
+}
+
+.search-button {
+  background-color: var(--primary);
+  color: white;
+  transition: background-color 0.2s ease;
+}
+
+.search-button:hover {
+  background-color: var(--soft-shadow-gray);
 }

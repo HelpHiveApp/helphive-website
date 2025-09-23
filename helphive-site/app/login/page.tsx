@@ -1,25 +1,39 @@
 'use client';
 
 import { useState } from 'react';
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setError('');
     
-    // Simulate login process
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // For demo purposes, just show success message
-    alert('Login successful! (This is a demo)');
-    setIsLoading(false);
-    
-    // In a real app, you would handle authentication here
-    // and redirect to the appropriate page
+    try {
+      const result = await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        setError('Invalid credentials. Please try again.');
+      } else {
+        // Redirect to available jobs page on successful login
+        router.push('/availablejobs');
+      }
+    } catch (error) {
+      setError('An error occurred. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -73,6 +87,12 @@ export default function Login() {
                 Sign in to your HelpHive account
               </p>
             </div>
+
+            {error && (
+              <div className="mb-4 p-3 rounded-lg text-sm" style={{ backgroundColor: '#fee2e2', color: '#dc2626' }}>
+                {error}
+              </div>
+            )}
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>

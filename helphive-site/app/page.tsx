@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useSession, signOut } from 'next-auth/react';
 import axios from 'axios';
 
 interface PlacePrediction {
@@ -13,11 +14,16 @@ interface PlacePrediction {
 }
 
 export default function Home() {
+  const { data: session } = useSession();
   const [searchQuery, setSearchQuery] = useState('');
   const [predictions, setPredictions] = useState<PlacePrediction[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [showPredictions, setShowPredictions] = useState(false);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleLogout = async () => {
+    await signOut({ callbackUrl: '/' });
+  };
 
   // You'll need to implement this function to get the current user email
   const getCurrentUserEmail = () => {
@@ -128,18 +134,29 @@ export default function Home() {
           >
             Help
           </a>
-          <a
-            href="/login"
-            className="nav-button text-xs px-2 py-1 rounded"
-          >
-            Log in
-          </a>
-          <a
-            href="/signup"
-            className="nav-button text-xs px-2 py-1 rounded"
-          >
-            Sign up
-          </a>
+          {session ? (
+            <button
+              onClick={handleLogout}
+              className="nav-button text-xs px-2 py-1 rounded"
+            >
+              Logout
+            </button>
+          ) : (
+            <>
+              <a
+                href="/login"
+                className="nav-button text-xs px-2 py-1 rounded"
+              >
+                Log in
+              </a>
+              <a
+                href="/signup"
+                className="nav-button text-xs px-2 py-1 rounded"
+              >
+                Sign up
+              </a>
+            </>
+          )}
         </nav>
       </header>
 

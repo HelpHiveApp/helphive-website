@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 export default function Signup() {
   const [firstName, setFirstName] = useState('');
@@ -11,31 +13,71 @@ export default function Signup() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
+    setSuccess('');
     
     if (password !== confirmPassword) {
-      alert('Passwords do not match!');
+      setError('Passwords do not match!');
       return;
     }
     
     if (!agreeToTerms) {
-      alert('Please agree to the Terms and Privacy Policy!');
+      setError('Please agree to the Terms and Privacy Policy!');
       return;
     }
     
     setIsLoading(true);
     
-    // Simulate signup process
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // For demo purposes, just show success message
-    alert('Account created successfully! (This is a demo)');
-    setIsLoading(false);
-    
-    // In a real app, you would handle registration here
-    // and redirect to the appropriate page
+    try {
+      // Call the signup API
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          displayName,
+          email,
+          password,
+          confirmPassword,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || 'Failed to create account');
+        return;
+      }
+
+      setSuccess('Account created successfully! Signing you in...');
+      
+      // Automatically sign in the user after successful registration
+      const result = await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        setError('Account created but failed to sign in. Please try logging in manually.');
+      } else {
+        // Redirect to available jobs page on successful login
+        router.push('/availablejobs');
+      }
+    } catch (error) {
+      setError('An error occurred. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -89,6 +131,18 @@ export default function Signup() {
                 Create your HelpHive account
               </p>
             </div>
+
+            {error && (
+              <div className="mb-4 p-3 rounded-lg text-sm" style={{ backgroundColor: '#fee2e2', color: '#dc2626' }}>
+                {error}
+              </div>
+            )}
+
+            {success && (
+              <div className="mb-4 p-3 rounded-lg text-sm" style={{ backgroundColor: '#d1fae5', color: '#065f46' }}>
+                {success}
+              </div>
+            )}
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-2 gap-4">

@@ -1,16 +1,20 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSession, signOut } from 'next-auth/react';
 import JobCard, { Job } from '../components/JobCard';
 
 export default function AvailableJobs() {
+  const { data: session, status } = useSession();
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [locationFilter, setLocationFilter] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [showAuthModal, setShowAuthModal] = useState(true);
+  
+  // Check if user is authenticated
+  const isAuthenticated = !!session?.user;
+  const showAuthModal = status !== 'loading' && !isAuthenticated;
 
   // Mock data - replace with actual API call
   useEffect(() => {
@@ -100,7 +104,7 @@ export default function AvailableJobs() {
   const handleApply = (jobId: string) => {
     console.log('Applying to job:', jobId);
     // Here you would implement the actual apply functionality
-    alert(`Applied to job ${jobId}! (This is a demo)`);
+    // For now, just log the application - no demo popup
   };
 
   const handleLogin = () => {
@@ -111,6 +115,10 @@ export default function AvailableJobs() {
   const handleSignup = () => {
     // Redirect to signup page
     window.location.href = '/signup';
+  };
+
+  const handleLogout = async () => {
+    await signOut({ callbackUrl: '/' });
   };
 
   const filteredJobs = jobs.filter(job => {
@@ -129,7 +137,7 @@ export default function AvailableJobs() {
   return (
     <div className="min-h-screen flex flex-col relative" style={{ backgroundColor: 'var(--off-white)', color: 'var(--dark-charcoal)' }}>
       {/* Authentication Modal */}
-      {showAuthModal && !isAuthenticated && (
+      {showAuthModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           {/* Backdrop with blur */}
           <div 
@@ -176,7 +184,7 @@ export default function AvailableJobs() {
       )}
 
       {/* Main content with conditional blur */}
-      <div className={showAuthModal && !isAuthenticated ? 'filter blur-sm' : ''}>
+      <div className={showAuthModal ? 'filter blur-sm' : ''}>
       {/* Top bar */}
       <header className="w-full flex items-center justify-between px-80 py-2 border-b" style={{ borderColor: 'var(--dark-charcoal)', backgroundColor: 'var(--dark-charcoal)' }}>
         <h1 className="text-lg font-bold font-ubuntu" style={{ color: 'var(--primary)' }}>
@@ -189,18 +197,29 @@ export default function AvailableJobs() {
           >
             Help
           </a>
-          <a
-            href="/login"
-            className="nav-button text-xs px-2 py-1 rounded"
-          >
-            Log in
-          </a>
-          <a
-            href="/signup"
-            className="nav-button text-xs px-2 py-1 rounded"
-          >
-            Sign up
-          </a>
+          {session ? (
+            <button
+              onClick={handleLogout}
+              className="nav-button text-xs px-2 py-1 rounded"
+            >
+              Logout
+            </button>
+          ) : (
+            <>
+              <a
+                href="/login"
+                className="nav-button text-xs px-2 py-1 rounded"
+              >
+                Log in
+              </a>
+              <a
+                href="/signup"
+                className="nav-button text-xs px-2 py-1 rounded"
+              >
+                Sign up
+              </a>
+            </>
+          )}
         </nav>
       </header>
 

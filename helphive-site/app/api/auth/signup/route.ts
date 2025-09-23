@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
+import { supabase } from '../../../../lib/supabase'
 
 // Define the signup schema for validation
 const signupSchema = z.object({
@@ -30,26 +31,83 @@ export async function POST(request: NextRequest) {
 
     const { firstName, lastName, displayName, email, password } = validatedFields.data
 
-    // TODO: Replace this with your actual user creation logic
-    // This could be a database insertion, API call to your backend, etc.
-    
-    // For now, this is a placeholder - you'll need to implement actual user creation
-    // Example: Hash the password and save to database
     try {
-      // Placeholder user creation logic
-      // In a real app, you would:
-      // 1. Hash the password using bcrypt or similar
-      // 2. Check if user already exists
-      // 3. Save user to database
-      // 4. Send verification email if needed
-      
-      // Mock user creation for demonstration
-      console.log('Creating user:', { firstName, lastName, displayName, email })
-      
-      // Simulate successful user creation
+      // Create user in Supabase Auth with metadata
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            first_name: firstName,
+            last_name: lastName,
+            display_name: displayName,
+            full_name: `${firstName} ${lastName}`,
+          }
+        }
+      })
+
+      if (error) {
+        console.error('Supabase signup error:', error.message)
+        
+        // Handle specific Supabase errors
+        if (error.message.includes('already registered')) {
+          return NextResponse.json(
+            { error: 'An account with this email already exists' },
+            { status: 400 }
+          )
+        }
+        
+        return NextResponse.json(
+          { error: error.message || 'Failed to create account' },
+          { status: 400 }
+        )
+      }
+
+      if (data.user) {
+        // Also create a profile record in the profiles table
+        let profileData = null;
+        try {
+          const profileInsertData = {
+            id: data.user.id,
+            first_name: firstName,
+            last_name: lastName,
+            display_name: displayName,
+          };
+
+          const { data: profile, error: profileError } = await supabase
+            .from('profiles')
+            .insert(profileInsertData)
+            .select()
+            .single();
+
+          if (profileError) {
+            console.error('Warning: Failed to create profile record:', profileError);
+            // Continue without profile data if profile creation fails
+          } else {
+            profileData = profile;
+          }
+        } catch (profileError) {
+          console.error('Warning: Failed to create profile record:', profileError);
+          // Continue without profile data if profile creation fails
+        }
+
+        return NextResponse.json(
+          { 
+            message: 'Account created successfully', 
+            user: { 
+              id: data.user.id,
+              email: data.user.email,
+              displayName: displayName 
+            },
+            profile: profileData
+          },
+          { status: 201 }
+        )
+      }
+
       return NextResponse.json(
-        { message: 'User created successfully', user: { email, displayName } },
-        { status: 201 }
+        { error: 'Failed to create user' },
+        { status: 500 }
       )
     } catch (error) {
       console.error('User creation error:', error)

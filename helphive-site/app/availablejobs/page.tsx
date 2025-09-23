@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import JobCard, { Job } from '../components/JobCard';
+import { supabase } from '../../lib/supabase';
 
 export default function AvailableJobs() {
   const { data: session, status } = useSession();
@@ -11,91 +12,36 @@ export default function AvailableJobs() {
   const [searchQuery, setSearchQuery] = useState('');
   const [locationFilter, setLocationFilter] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
+  const [showAppModal, setShowAppModal] = useState(false);
   
   // Check if user is authenticated
   const isAuthenticated = !!session?.user;
   const showAuthModal = status !== 'loading' && !isAuthenticated;
 
-  // Mock data - replace with actual API call
+  // Fetch jobs from Supabase
   useEffect(() => {
     const fetchJobs = async () => {
       setLoading(true);
       
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Mock job data
-      const mockJobs: Job[] = [
-        {
-          id: '1',
-          title: 'Senior Frontend Developer',
-          company: 'TechCorp Inc.',
-          location: 'San Francisco, CA',
-          description: 'We are looking for an experienced frontend developer to join our team. You will be responsible for building user-facing features using React, TypeScript, and modern web technologies. Experience with Next.js and Tailwind CSS is a plus.',
-          salary: '$120,000 - $150,000',
-          type: 'full-time',
-          postedDate: '2024-01-15',
-          tags: ['React', 'TypeScript', 'Next.js', 'Tailwind CSS']
-        },
-        {
-          id: '2',
-          title: 'UX/UI Designer',
-          company: 'Design Studio',
-          location: 'New York, NY',
-          description: 'Join our creative team as a UX/UI Designer. You will work on designing intuitive and beautiful user interfaces for web and mobile applications. Strong portfolio and experience with Figma required.',
-          salary: '$80,000 - $100,000',
-          type: 'full-time',
-          postedDate: '2024-01-14',
-          tags: ['Figma', 'UI Design', 'UX Research', 'Prototyping']
-        },
-        {
-          id: '3',
-          title: 'Freelance Content Writer',
-          company: 'Marketing Agency',
-          location: 'Remote',
-          description: 'We need a talented content writer to create engaging blog posts, social media content, and marketing materials. Experience in tech and SaaS industries preferred.',
-          salary: '$50 - $75/hour',
-          type: 'freelance',
-          postedDate: '2024-01-13',
-          tags: ['Content Writing', 'SEO', 'Marketing', 'Remote']
-        },
-        {
-          id: '4',
-          title: 'Backend Developer',
-          company: 'StartupXYZ',
-          location: 'Austin, TX',
-          description: 'Looking for a backend developer to help build scalable APIs and services. Experience with Node.js, Python, or Go required. Knowledge of cloud platforms (AWS, GCP) is a plus.',
-          salary: '$90,000 - $120,000',
-          type: 'full-time',
-          postedDate: '2024-01-12',
-          tags: ['Node.js', 'Python', 'AWS', 'APIs']
-        },
-        {
-          id: '5',
-          title: 'Part-time Data Analyst',
-          company: 'Analytics Co.',
-          location: 'Chicago, IL',
-          description: 'Part-time position for a data analyst to help with business intelligence and reporting. Strong SQL skills and experience with data visualization tools required.',
-          salary: '$40,000 - $50,000',
-          type: 'part-time',
-          postedDate: '2024-01-11',
-          tags: ['SQL', 'Data Analysis', 'Tableau', 'Business Intelligence']
-        },
-        {
-          id: '6',
-          title: 'Contract Mobile Developer',
-          company: 'Mobile Solutions',
-          location: 'Los Angeles, CA',
-          description: '6-month contract position for an experienced mobile developer. Must have experience with React Native or Flutter. iOS and Android development experience preferred.',
-          salary: '$80 - $100/hour',
-          type: 'contract',
-          postedDate: '2024-01-10',
-          tags: ['React Native', 'Flutter', 'iOS', 'Android']
+      try {
+        const { data, error } = await supabase
+          .from('jobs')
+          .select('*')
+          .eq('status', 'open')
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          console.error('Error fetching jobs:', error);
+          setJobs([]);
+        } else {
+          setJobs(data || []);
         }
-      ];
-      
-      setJobs(mockJobs);
-      setLoading(false);
+      } catch (error) {
+        console.error('Error fetching jobs:', error);
+        setJobs([]);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchJobs();
@@ -103,8 +49,21 @@ export default function AvailableJobs() {
 
   const handleApply = (jobId: string) => {
     console.log('Applying to job:', jobId);
-    // Here you would implement the actual apply functionality
-    // For now, just log the application - no demo popup
+    setShowAppModal(true);
+  };
+
+  const handleCloseAppModal = () => {
+    setShowAppModal(false);
+  };
+
+  const handleDownloadAndroid = () => {
+    // Add Android app store link here
+    console.log('Download Android app');
+  };
+
+  const handleDownloadIOS = () => {
+    // Add iOS app store link here
+    console.log('Download iOS app');
   };
 
   const handleLogin = () => {
@@ -123,13 +82,15 @@ export default function AvailableJobs() {
 
   const filteredJobs = jobs.filter(job => {
     const matchesSearch = job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         job.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         job.description.toLowerCase().includes(searchQuery.toLowerCase());
+                         job.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         (job.required_skills && job.required_skills.some(skill => 
+                           skill.toLowerCase().includes(searchQuery.toLowerCase())
+                         ));
     
     const matchesLocation = !locationFilter || 
-                           job.location.toLowerCase().includes(locationFilter.toLowerCase());
+                           (job.location && job.location.toLowerCase().includes(locationFilter.toLowerCase()));
     
-    const matchesType = !typeFilter || job.type === typeFilter;
+    const matchesType = !typeFilter || job.job_type === typeFilter;
     
     return matchesSearch && matchesLocation && matchesType;
   });
@@ -183,8 +144,74 @@ export default function AvailableJobs() {
         </div>
       )}
 
+      {/* App Download Modal */}
+      {showAppModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          {/* Backdrop with blur */}
+          <div 
+            className="absolute inset-0"
+            style={{ 
+              backgroundColor: 'rgba(0, 0, 0, 0.5)',
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)'
+            }}
+            onClick={handleCloseAppModal}
+          />
+          
+          {/* Modal content */}
+          <div 
+            className="relative bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl"
+            style={{ backgroundColor: 'var(--off-white)' }}
+          >
+            <div className="text-center">
+              {/* Close button */}
+              <button
+                onClick={handleCloseAppModal}
+                className="absolute top-4 right-4 text-2xl"
+                style={{ color: 'var(--mid-gray)' }}
+              >
+                ×
+              </button>
+              
+              {/* HelpHive Logo */}
+              <div className="mb-6">
+                <img 
+                  src="/HelpHiveLogo.png" 
+                  alt="HelpHive Logo" 
+                  className="mx-auto h-16 w-auto"
+                />
+              </div>
+              
+              <h3 className="text-2xl font-bold mb-4" style={{ color: 'var(--dark-charcoal)' }}>
+                Join HelpHive
+              </h3>
+              <p className="mb-8" style={{ color: 'var(--mid-gray)' }}>
+                Connect with Hirers by downloading the app
+              </p>
+              
+              <div className="flex flex-col gap-4">
+                <button
+                  onClick={handleDownloadAndroid}
+                  className="w-full py-3 px-6 rounded-xl font-medium text-black transition-opacity duration-200 hover:opacity-90"
+                  style={{ backgroundColor: 'var(--accent)' }}
+                >
+                  Android
+                </button>
+                <button
+                  onClick={handleDownloadIOS}
+                  className="w-full py-3 px-6 rounded-xl font-medium text-black transition-opacity duration-200 hover:opacity-90"
+                  style={{ backgroundColor: 'var(--accent)' }}
+                >
+                  iOS
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Main content with conditional blur */}
-      <div className={showAuthModal ? 'filter blur-sm' : ''}>
+      <div className={showAuthModal || showAppModal ? 'filter blur-sm' : ''}>
       {/* Top bar */}
       <header className="w-full flex items-center justify-between px-80 py-2 border-b" style={{ borderColor: 'var(--dark-charcoal)', backgroundColor: 'var(--dark-charcoal)' }}>
         <h1 className="text-lg font-bold font-ubuntu" style={{ color: 'var(--primary)' }}>
@@ -231,7 +258,7 @@ export default function AvailableJobs() {
             Available Jobs
           </h2>
           <p className="text-lg mb-6" style={{ color: 'var(--mid-gray)' }}>
-            Find your next opportunity in the hive. Browse through {jobs.length} available positions.
+            Find your next opportunity in the hive. Browse through all available jobs.
           </p>
 
           {/* Filters */}
@@ -276,10 +303,8 @@ export default function AvailableJobs() {
                 onChange={(e) => setTypeFilter(e.target.value)}
               >
                 <option value="">All Types</option>
-                <option value="full-time">Full Time</option>
-                <option value="part-time">Part Time</option>
-                <option value="contract">Contract</option>
-                <option value="freelance">Freelance</option>
+                <option value="fixed">Fixed Price</option>
+                <option value="hourly">Hourly Rate</option>
               </select>
             </div>
           </div>

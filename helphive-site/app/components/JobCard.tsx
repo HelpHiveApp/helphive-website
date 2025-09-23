@@ -3,13 +3,18 @@
 interface Job {
   id: string;
   title: string;
-  company: string;
-  location: string;
   description: string;
-  salary?: string;
-  type: 'full-time' | 'part-time' | 'contract' | 'freelance';
-  postedDate: string;
-  tags?: string[];
+  job_type: 'fixed' | 'hourly';
+  budget: number;
+  location?: string;
+  required_skills?: string[];
+  start_date?: string;
+  end_date?: string;
+  status: 'open' | 'assigned' | 'completed' | 'cancelled';
+  created_at: string;
+  updated_at: string;
+  poster_id: string;
+  worker_id?: string;
 }
 
 interface JobCardProps {
@@ -38,16 +43,42 @@ export default function JobCard({ job, onApply }: JobCardProps) {
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case 'full-time':
+      case 'fixed':
         return 'var(--primary)';
-      case 'part-time':
+      case 'hourly':
+        return 'var(--primary)';
+      default:
+        return 'var(--mid-gray)';
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'open':
+        return 'var(--primary)';
+      case 'assigned':
         return 'var(--accent)';
-      case 'contract':
+      case 'completed':
         return 'var(--slate-blue)';
-      case 'freelance':
+      case 'cancelled':
         return 'var(--mid-gray)';
       default:
         return 'var(--mid-gray)';
+    }
+  };
+
+  const formatBudget = (budget: number, jobType: string) => {
+    const formatter = new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    });
+    
+    if (jobType === 'hourly') {
+      return `${formatter.format(budget)}/hr`;
+    } else {
+      return formatter.format(budget);
     }
   };
 
@@ -67,18 +98,28 @@ export default function JobCard({ job, onApply }: JobCardProps) {
             {job.title}
           </h3>
           <div className="flex items-center gap-4 text-sm" style={{ color: 'var(--mid-gray)' }}>
-            <span className="font-medium">{job.company}</span>
-            <span>•</span>
-            <span>{job.location}</span>
-            <span>•</span>
-            <span>{formatDate(job.postedDate)}</span>
+            {job.location && (
+              <>
+                <span>{job.location}</span>
+                <span>•</span>
+              </>
+            )}
+            <span>{formatDate(job.created_at)}</span>
           </div>
         </div>
-        <div 
-          className="px-3 py-1 rounded-full text-xs font-medium text-white"
-          style={{ backgroundColor: getTypeColor(job.type) }}
-        >
-          {job.type.charAt(0).toUpperCase() + job.type.slice(1).replace('-', ' ')}
+        <div className="flex gap-2">
+          <div 
+            className="px-3 py-1 rounded-full text-xs font-medium text-white"
+            style={{ backgroundColor: getTypeColor(job.job_type) }}
+          >
+            {job.job_type.charAt(0).toUpperCase() + job.job_type.slice(1)}
+          </div>
+          <div 
+            className="px-3 py-1 rounded-full text-xs font-medium text-white"
+            style={{ backgroundColor: getStatusColor(job.status) }}
+          >
+            {job.status.charAt(0).toUpperCase() + job.status.slice(1)}
+          </div>
         </div>
       </div>
 
@@ -87,10 +128,10 @@ export default function JobCard({ job, onApply }: JobCardProps) {
         {job.description}
       </p>
 
-      {/* Tags */}
-      {job.tags && job.tags.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-4">
-          {job.tags.map((tag, index) => (
+      {/* Skills */}
+      <div className="flex flex-wrap gap-2 mb-4">
+        {job.required_skills && job.required_skills.length > 0 ? (
+          job.required_skills.map((skill: string, index: number) => (
             <span
               key={index}
               className="px-2 py-1 rounded text-xs"
@@ -99,27 +140,36 @@ export default function JobCard({ job, onApply }: JobCardProps) {
                 color: 'var(--dark-charcoal)' 
               }}
             >
-              {tag}
+              {skill}
             </span>
-          ))}
-        </div>
-      )}
+          ))
+        ) : (
+          <span
+            className="px-2 py-1 rounded text-xs"
+            style={{ 
+              backgroundColor: 'var(--light-gray)', 
+              color: 'var(--mid-gray)',
+              fontStyle: 'italic'
+            }}
+          >
+            No special skills listed
+          </span>
+        )}
+      </div>
 
       {/* Footer */}
       <div className="flex justify-between items-center">
         <div>
-          {job.salary && (
-            <span className="text-sm font-medium" style={{ color: 'var(--primary)' }}>
-              {job.salary}
-            </span>
-          )}
+          <span className="text-sm font-bold" style={{ color: 'var(--primary)' }}>
+            {formatBudget(job.budget, job.job_type)}
+          </span>
         </div>
         <button
           onClick={handleApply}
           className="px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 hover:opacity-90"
           style={{ 
-            backgroundColor: 'var(--primary)', 
-            color: 'white' 
+            backgroundColor: 'var(--accent)', 
+            color: 'var(--background)' 
           }}
         >
           Apply Now

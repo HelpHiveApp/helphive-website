@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { HexBackground } from '@/components/ui/hex-background';
 
 export default function Signup() {
   const [firstName, setFirstName] = useState('');
@@ -81,28 +82,39 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--off-white)', color: 'var(--dark-charcoal)' }}>
+    <div className="relative w-full">
+      {/* Hexagon background - positioned absolutely behind content */}
+      <div className="absolute inset-0 z-0 h-full w-full">
+        <HexBackground
+          hexagonSize={75}
+          hexagonMargin={4}
+          className="w-full min-h-full"
+        />
+      </div>
+      
+      {/* Main content - elevated above background */}
+      <div className="relative z-10 min-h-screen flex flex-col pointer-events-none" style={{ color: 'var(--dark-charcoal)' }}>
       {/* Top bar */}
-      <header className="w-full flex items-center justify-between px-80 py-2 border-b" style={{ borderColor: 'var(--dark-charcoal)', backgroundColor: 'var(--dark-charcoal)' }}>
+      <header className="w-full flex items-center justify-between px-80 py-2 border-b pointer-events-none" style={{ borderColor: 'var(--dark-charcoal)', backgroundColor: 'var(--dark-charcoal)' }}>
         <h1 className="text-lg font-bold font-ubuntu" style={{ color: 'var(--primary)' }}>
-          <a href="/">HelpHive</a>
+          <a href="/" className="pointer-events-auto">HelpHive</a>
         </h1>
         <nav className="flex space-x-3">
           <a
             href="/help"
-            className="nav-button text-xs px-2 py-1 rounded"
+            className="nav-button text-xs px-2 py-1 rounded pointer-events-auto"
           >
             Help
           </a>
           <a
             href="/login"
-            className="nav-button text-xs px-2 py-1 rounded"
+            className="nav-button text-xs px-2 py-1 rounded pointer-events-auto"
           >
             Log in
           </a>
           <a
             href="/signup"
-            className="nav-button text-xs px-2 py-1 rounded"
+            className="nav-button text-xs px-2 py-1 rounded pointer-events-auto"
           >
             Sign up
           </a>
@@ -110,10 +122,10 @@ export default function Signup() {
       </header>
 
       {/* Main content */}
-      <main className="flex-1 flex items-center justify-center px-8 py-12">
+      <main className="flex-1 flex items-center justify-center px-8 py-12 pointer-events-none">
         <div className="w-full max-w-md">
           <div 
-            className="rounded-2xl p-8 shadow-lg"
+            className="rounded-2xl p-8 shadow-lg pointer-events-auto"
             style={{ backgroundColor: 'var(--off-white)', border: '1px solid var(--light-gray)' }}
           >
             <div className="text-center mb-8">
@@ -303,7 +315,7 @@ export default function Signup() {
                   I agree to the{' '}
                   <a 
                     href="/legal/terms" 
-                    className="hover:underline"
+                    className="hover:underline pointer-events-auto"
                     style={{ color: 'var(--primary)' }}
                   >
                     Terms
@@ -311,7 +323,7 @@ export default function Signup() {
                   {' and '}
                   <a 
                     href="/legal/privacy" 
-                    className="hover:underline"
+                    className="hover:underline pointer-events-auto"
                     style={{ color: 'var(--primary)' }}
                   >
                     Privacy Policy
@@ -334,7 +346,7 @@ export default function Signup() {
                 Already have an account?{' '}
                 <a 
                   href="/login" 
-                  className="font-medium hover:underline"
+                  className="font-medium hover:underline pointer-events-auto"
                   style={{ color: 'var(--primary)' }}
                 >
                   Sign in
@@ -346,13 +358,14 @@ export default function Signup() {
       </main>
 
       {/* Footer */}
-      <footer className="w-full py-4 text-center">
+      <footer className="w-full py-4 text-center pointer-events-none">
         <p className="text-xs" style={{ color: 'var(--mid-gray)' }}>
-          <a href="/legal/terms" className="hover:underline" style={{ color: 'var(--mid-gray)' }}>Terms</a>
+          <a href="/legal/terms" className="hover:underline pointer-events-auto" style={{ color: 'var(--mid-gray)' }}>Terms</a>
           {' & '}
-          <a href="/legal/privacy" className="hover:underline" style={{ color: 'var(--mid-gray)' }}>Privacy</a>
+          <a href="/legal/privacy" className="hover:underline pointer-events-auto" style={{ color: 'var(--mid-gray)' }}>Privacy</a>
         </p>
       </footer>
+      </div>
     </div>
   );
 }

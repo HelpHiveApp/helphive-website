@@ -267,7 +267,7 @@ export default function Home() {
           {/* <div className="w-full max-w-4xl h-px" style={{ backgroundColor: 'var(--light-gray)' }}></div> */}
 
           {/* HelpHive Logo */}
-          <section className="flex justify-center px-8 lg:px-16 pb-8 pt-12 pointer-events-none">
+          <section className="flex justify-center px-8 lg:px-16 pb-8 pt-4 pointer-events-none">
             <div className="flex justify-center">
               <img
                 src="/HelpHiveLogo.png"

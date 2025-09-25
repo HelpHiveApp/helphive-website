@@ -84,7 +84,7 @@ export default function JobCard({ job, onApply }: JobCardProps) {
 
   return (
     <div 
-      className="rounded-xl p-6 shadow-sm border hover:shadow-md transition-shadow duration-200"
+      className="rounded-xl p-6 shadow-sm border hover:shadow-md transition-shadow duration-200 pointer-events-auto"
       style={{ 
         backgroundColor: 'var(--off-white)', 
         borderColor: 'var(--light-gray)',

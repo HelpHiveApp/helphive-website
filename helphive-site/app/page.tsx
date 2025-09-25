@@ -160,8 +160,50 @@ export default function Home() {
         </nav>
       </header>
 
+      {/* New section - Post a job */}
+      <section className="flex flex-col lg:flex-row items-center justify-center px-8 lg:px-16 py-20 gap-8 lg:gap-16 min-h-screen border-b-2" style={{ borderColor: 'var(--light-gray)' }}>
+        {/* Left content */}
+        <div className="w-full lg:w-1/2 max-w-lg text-center lg:text-left">
+          <h2 className="text-4xl lg:text-5xl font-bold mb-6" style={{ color: 'var(--dark-charcoal)' }}>
+            Post jobs. Find work.
+          </h2>
+          <p className="mb-8" style={{ color: 'var(--mid-gray)' }}>
+            Join the hive - where hirers and job seekers connect.
+          </p>
+
+          {/* Post a job button */}
+          <div className="max-w-md mx-auto lg:mx-0">
+            <button 
+              className="w-full px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 hover:shadow-lg"
+              style={{ 
+                backgroundColor: 'var(--accent)', 
+                color: 'var(--dark-charcoal)',
+                border: 'none'
+              }}
+              onClick={() => {
+                // Add navigation logic here when ready
+                console.log('Post a job clicked');
+              }}
+            >
+              Post a job
+            </button>
+          </div>
+        </div>
+
+        {/* Right content (image) */}
+        <div className="w-full lg:w-1/2 flex justify-center">
+          <div className="w-full max-w-lg">
+            <img
+              src="/LandingImage.png"
+              alt="HelpHive illustration"
+              className="w-full rounded-2xl shadow-lg"
+            />
+          </div>
+        </div>
+      </section>
+
       {/* Main hero section */}
-      <main className="flex flex-col lg:flex-row flex-1 items-center justify-center px-8 lg:px-16 py-12 gap-8 lg:gap-16">
+      <main className="flex flex-col lg:flex-row flex-1 items-center justify-center px-8 lg:px-16 py-20 gap-8 lg:gap-16 min-h-screen">
         {/* Left content */}
         <div className="w-full lg:w-1/2 max-w-lg text-center lg:text-left">
           <h2 className="text-4xl lg:text-5xl font-bold mb-6" style={{ color: 'var(--dark-charcoal)' }}>

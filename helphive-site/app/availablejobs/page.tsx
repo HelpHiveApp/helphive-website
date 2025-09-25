@@ -212,7 +212,7 @@ export default function AvailableJobs() {
 
       {/* Main content with conditional blur */}
       <div className={showAuthModal || showAppModal ? 'filter blur-sm' : ''}>
-      {/* Top bar */}
+        {/* Top bar */}
       <header className="w-full flex items-center justify-between px-80 py-2 border-b" style={{ borderColor: 'var(--dark-charcoal)', backgroundColor: 'var(--dark-charcoal)' }}>
         <h1 className="text-lg font-bold font-ubuntu" style={{ color: 'var(--primary)' }}>
           <a href="/">HelpHive</a>
@@ -341,14 +341,14 @@ export default function AvailableJobs() {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="w-full py-4 text-center">
-        <p className="text-xs" style={{ color: 'var(--mid-gray)' }}>
-          <a href="/legal/terms" className="hover:underline" style={{ color: 'var(--mid-gray)' }}>Terms</a>
-          {' & '}
-          <a href="/legal/privacy" className="hover:underline" style={{ color: 'var(--mid-gray)' }}>Privacy</a>
-        </p>
-      </footer>
+        {/* Footer */}
+        <footer className="w-full py-4 text-center">
+          <p className="text-xs" style={{ color: 'var(--mid-gray)' }}>
+            <a href="/legal/terms" className="hover:underline" style={{ color: 'var(--mid-gray)' }}>Terms</a>
+            {' & '}
+            <a href="/legal/privacy" className="hover:underline" style={{ color: 'var(--mid-gray)' }}>Privacy</a>
+          </p>
+        </footer>
       </div>
     </div>
   );

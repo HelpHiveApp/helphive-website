@@ -225,7 +225,7 @@ export default function AvailableJobs() {
       {/* Main content with conditional blur */}
       <div className={showAuthModal || showAppModal ? 'filter blur-sm' : ''}>
         {/* Top bar */}
-      <header className="w-full flex items-center justify-between px-80 py-2 border-b pointer-events-none" style={{ borderColor: 'var(--dark-charcoal)', backgroundColor: 'var(--dark-charcoal)' }}>
+      <header className="w-full flex items-center justify-between px-4 sm:px-8 md:px-16 lg:px-32 xl:px-60 2xl:px-80 py-2 border-b pointer-events-none" style={{ borderColor: 'var(--dark-charcoal)', backgroundColor: 'var(--dark-charcoal)' }}>
         <h1 className="text-lg font-bold font-ubuntu" style={{ color: 'var(--primary)' }}>
           <a href="/" className="pointer-events-auto">HelpHive</a>
         </h1>

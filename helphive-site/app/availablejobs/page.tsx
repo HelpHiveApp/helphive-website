@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import JobCard, { Job } from '../components/JobCard';
 import { supabase } from '../../lib/supabase';
+import { HexBackground } from '@/components/ui/hex-background';
 
 export default function AvailableJobs() {
   const { data: session, status } = useSession();
@@ -96,10 +97,21 @@ export default function AvailableJobs() {
   });
 
   return (
-    <div className="min-h-screen flex flex-col relative" style={{ backgroundColor: 'var(--off-white)', color: 'var(--dark-charcoal)' }}>
+    <div className="relative w-full">
+      {/* Hexagon background - positioned absolutely behind content */}
+      <div className="absolute inset-0 z-0 h-full w-full">
+        <HexBackground
+          hexagonSize={75}
+          hexagonMargin={4}
+          className="w-full min-h-full"
+        />
+      </div>
+      
+      {/* Main content - elevated above background */}
+      <div className="relative z-10 min-h-screen flex flex-col pointer-events-none" style={{ color: 'var(--dark-charcoal)' }}>
       {/* Authentication Modal */}
       {showAuthModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
+        <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-auto">
           {/* Backdrop with blur */}
           <div 
             className="absolute inset-0"
@@ -146,7 +158,7 @@ export default function AvailableJobs() {
 
       {/* App Download Modal */}
       {showAppModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
+        <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-auto">
           {/* Backdrop with blur */}
           <div 
             className="absolute inset-0"
@@ -213,21 +225,21 @@ export default function AvailableJobs() {
       {/* Main content with conditional blur */}
       <div className={showAuthModal || showAppModal ? 'filter blur-sm' : ''}>
         {/* Top bar */}
-      <header className="w-full flex items-center justify-between px-80 py-2 border-b" style={{ borderColor: 'var(--dark-charcoal)', backgroundColor: 'var(--dark-charcoal)' }}>
+      <header className="w-full flex items-center justify-between px-80 py-2 border-b pointer-events-none" style={{ borderColor: 'var(--dark-charcoal)', backgroundColor: 'var(--dark-charcoal)' }}>
         <h1 className="text-lg font-bold font-ubuntu" style={{ color: 'var(--primary)' }}>
-          <a href="/">HelpHive</a>
+          <a href="/" className="pointer-events-auto">HelpHive</a>
         </h1>
         <nav className="flex space-x-3">
           <a
             href="/help"
-            className="nav-button text-xs px-2 py-1 rounded"
+            className="nav-button text-xs px-2 py-1 rounded pointer-events-auto"
           >
             Help
           </a>
           {session ? (
             <button
               onClick={handleLogout}
-              className="nav-button text-xs px-2 py-1 rounded"
+              className="nav-button text-xs px-2 py-1 rounded pointer-events-auto"
             >
               Logout
             </button>
@@ -235,13 +247,13 @@ export default function AvailableJobs() {
             <>
               <a
                 href="/login"
-                className="nav-button text-xs px-2 py-1 rounded"
+                className="nav-button text-xs px-2 py-1 rounded pointer-events-auto"
               >
                 Log in
               </a>
               <a
                 href="/signup"
-                className="nav-button text-xs px-2 py-1 rounded"
+                className="nav-button text-xs px-2 py-1 rounded pointer-events-auto"
               >
                 Sign up
               </a>
@@ -251,7 +263,7 @@ export default function AvailableJobs() {
       </header>
 
       {/* Main content */}
-      <main className="flex-1 px-8 lg:px-16 py-12">
+      <main className="flex-1 px-8 lg:px-16 py-12 pointer-events-none">
         {/* Page header */}
         <div className="max-w-6xl mx-auto mb-8">
           <h2 className="text-3xl lg:text-4xl font-bold mb-4" style={{ color: 'var(--dark-charcoal)' }}>
@@ -262,7 +274,7 @@ export default function AvailableJobs() {
           </p>
 
           {/* Filters */}
-          <div className="flex flex-col md:flex-row gap-4 mb-8">
+          <div className="flex flex-col md:flex-row gap-4 mb-8 pointer-events-auto">
             <div className="flex-1">
               <input
                 type="text"
@@ -311,7 +323,7 @@ export default function AvailableJobs() {
         </div>
 
         {/* Jobs grid */}
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-6xl mx-auto pointer-events-auto">
           {loading ? (
             <div className="flex justify-center items-center py-12">
               <div className="text-lg" style={{ color: 'var(--mid-gray)' }}>
@@ -342,13 +354,14 @@ export default function AvailableJobs() {
       </main>
 
         {/* Footer */}
-        <footer className="w-full py-4 text-center">
+        <footer className="w-full py-4 text-center pointer-events-none">
           <p className="text-xs" style={{ color: 'var(--mid-gray)' }}>
-            <a href="/legal/terms" className="hover:underline" style={{ color: 'var(--mid-gray)' }}>Terms</a>
+            <a href="/legal/terms" className="hover:underline pointer-events-auto" style={{ color: 'var(--mid-gray)' }}>Terms</a>
             {' & '}
-            <a href="/legal/privacy" className="hover:underline" style={{ color: 'var(--mid-gray)' }}>Privacy</a>
+            <a href="/legal/privacy" className="hover:underline pointer-events-auto" style={{ color: 'var(--mid-gray)' }}>Privacy</a>
           </p>
         </footer>
+      </div>
       </div>
     </div>
   );

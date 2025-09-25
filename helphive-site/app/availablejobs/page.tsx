@@ -100,11 +100,11 @@ export default function AvailableJobs() {
   return (
     <div className="relative w-full">
       {/* Hexagon background - positioned absolutely behind content */}
-      <div className="absolute inset-0 z-0 h-full w-full">
+      <div className="absolute inset-0 z-0 min-h-full w-full">
         <HexBackground
           hexagonSize={75}
           hexagonMargin={4}
-          className="w-full min-h-full"
+          className="w-full h-full"
         />
       </div>
       

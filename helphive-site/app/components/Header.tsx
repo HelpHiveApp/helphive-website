@@ -26,9 +26,18 @@ export default function Header({ showAuthButtons = true }: HeaderProps) {
 
   return (
     <header className="w-full flex items-center justify-between px-4 sm:px-8 md:px-16 lg:px-32 xl:px-60 2xl:px-80 py-2 border-b pointer-events-none" style={{ borderColor: 'var(--dark-charcoal)', backgroundColor: 'var(--dark-charcoal)' }}>
-      <h1 className="text-lg font-bold font-ubuntu" style={{ color: 'var(--primary)' }}>
-        <a href="/" className="pointer-events-auto">HelpHive</a>
-      </h1>
+      <div className="flex items-center space-x-2">
+        <a href="/" className="pointer-events-auto flex items-center space-x-2">
+          <img
+            src="/HelpHiveLogo.png"
+            alt="HelpHive Logo"
+            className="h-8 w-auto"
+          />
+          <h1 className="text-lg font-bold font-ubuntu" style={{ color: 'var(--primary)' }}>
+            HelpHive
+          </h1>
+        </a>
+      </div>
 
       {/* Desktop Navigation */}
       <nav className="hidden md:flex items-center space-x-3">

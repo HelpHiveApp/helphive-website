@@ -132,11 +132,11 @@ export default function Home() {
   return (
     <div className="relative w-full">
       {/* Hexagon background - positioned absolutely behind content */}
-      <div className="absolute inset-0 z-0 h-full w-full">
+      <div className="absolute inset-0 z-0 min-h-full w-full">
         <HexBackground
           hexagonSize={75}
           hexagonMargin={4}
-          className="w-full min-h-full"
+          className="w-full h-full"
         />
       </div>
       
@@ -266,8 +266,19 @@ export default function Home() {
           {/* Divider */}
           {/* <div className="w-full max-w-4xl h-px" style={{ backgroundColor: 'var(--light-gray)' }}></div> */}
 
+          {/* HelpHive Logo */}
+          <section className="flex justify-center px-8 lg:px-16 pb-8 pt-12 pointer-events-none">
+            <div className="flex justify-center">
+              <img
+                src="/HelpHiveLogo.png"
+                alt="HelpHive Logo"
+                className="h-24 w-auto"
+              />
+            </div>
+          </section>
+
           {/* Mobile app promotion text */}
-          <section className="flex justify-center px-8 lg:px-16 py-8 pointer-events-none">
+          <section className="flex justify-center px-8 lg:px-16 pt-8 pb-8 pointer-events-none">
             <div className="text-center max-w-4xl">
               <p className="text-lg italic" style={{ color: 'var(--mid-gray)' }}>
                 Core hiring and job management features are available in our mobile app — download to manage applications and chat with candidates.

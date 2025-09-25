@@ -42,7 +42,7 @@ function HexBackground({
       document.documentElement.offsetHeight,
       window.innerHeight
     );
-    const rows = Math.ceil(contentHeight / rowSpacing) + 2; // Add extra rows for safety
+    const rows = Math.ceil(contentHeight / rowSpacing) + 4; // Add extra rows for safety
     const columns = Math.ceil(window.innerWidth / hexagonWidth) + 1;
     setGridDimensions({ rows, columns });
   }, [rowSpacing, hexagonWidth]);
@@ -57,13 +57,14 @@ function HexBackground({
     <div
       data-slot="hex-background"
       className={cn(
-        'relative size-full overflow-hidden dark:bg-neutral-900 bg-neutral-100',
+        'relative w-full overflow-hidden dark:bg-neutral-900 bg-neutral-100',
         className,
       )}
+      style={{ minHeight: '100vh' }}
       {...props}
     >
       <style>{`:root { --hexagon-margin: ${hexagonMargin}px; }`}</style>
-      <div className="absolute top-0 -left-0 size-full overflow-hidden pointer-events-auto">
+      <div className="absolute top-0 -left-0 w-full overflow-hidden pointer-events-auto" style={{ minHeight: '100vh' }}>
         {Array.from({ length: gridDimensions.rows }).map((_, rowIndex) => (
           <div
             key={`row-${rowIndex}`}

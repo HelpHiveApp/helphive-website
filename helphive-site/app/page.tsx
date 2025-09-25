@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import axios from 'axios';
 import { HexBackground } from '@/components/ui/hex-background';
+import Header from './components/Header';
 
 interface PlacePrediction {
   place_id: string;
@@ -123,6 +124,11 @@ export default function Home() {
       handleSearch();
     }
   };
+
+  const handlePostJob = () => {
+    // Always redirect to post job page - it will handle authentication protection
+    window.location.href = '/postjob';
+  };
   return (
     <div className="relative w-full">
       {/* Hexagon background - positioned absolutely behind content */}
@@ -136,41 +142,7 @@ export default function Home() {
       
       {/* Main content - can grow naturally */}
       <div className="relative z-10 min-h-screen flex flex-col pointer-events-none" style={{ color: 'var(--dark-charcoal)' }}>
-        {/* Top bar */}
-        <header className="w-full flex items-center justify-between px-4 sm:px-8 md:px-16 lg:px-32 xl:px-60 2xl:px-80 py-2 border-b pointer-events-none" style={{ borderColor: 'var(--dark-charcoal)', backgroundColor: 'var(--dark-charcoal)' }}>
-          <h1 className="text-lg font-bold font-ubuntu" style={{ color: 'var(--primary)' }}>HelpHive</h1>
-          <nav className="flex space-x-3">
-            <a
-              href="/help"
-              className="nav-button text-xs px-2 py-1 rounded pointer-events-auto"
-            >
-              Help
-            </a>
-            {session ? (
-              <button
-                onClick={handleLogout}
-                className="nav-button text-xs px-2 py-1 rounded pointer-events-auto"
-              >
-                Logout
-              </button>
-            ) : (
-              <>
-                <a
-                  href="/login"
-                  className="nav-button text-xs px-2 py-1 rounded pointer-events-auto"
-                >
-                  Log in
-                </a>
-                <a
-                  href="/signup"
-                  className="nav-button text-xs px-2 py-1 rounded pointer-events-auto"
-                >
-                  Sign up
-                </a>
-              </>
-            )}
-          </nav>
-        </header>
+        <Header />
 
       {/* Main content area */}
         <main>
@@ -197,10 +169,7 @@ export default function Home() {
                       color: 'var(--dark-charcoal)',
                       border: 'none'
                     }}
-                    onClick={() => {
-                      // Add navigation logic here when ready
-                      console.log('Post a job clicked');
-                    }}
+                    onClick={handlePostJob}
                   >
                     Post a job
                   </button>

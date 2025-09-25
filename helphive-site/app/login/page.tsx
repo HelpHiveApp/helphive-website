@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { HexBackground } from '@/components/ui/hex-background';
+import Header from '../components/Header';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -50,32 +51,7 @@ export default function Login() {
       
       {/* Main content - elevated above background */}
       <div className="relative z-10 min-h-screen flex flex-col pointer-events-none" style={{ color: 'var(--dark-charcoal)' }}>
-      {/* Top bar */}
-      <header className="w-full flex items-center justify-between px-4 sm:px-8 md:px-16 lg:px-32 xl:px-60 2xl:px-80 py-2 border-b pointer-events-none" style={{ borderColor: 'var(--dark-charcoal)', backgroundColor: 'var(--dark-charcoal)' }}>
-        <h1 className="text-lg font-bold font-ubuntu" style={{ color: 'var(--primary)' }}>
-          <a href="/" className="pointer-events-auto">HelpHive</a>
-        </h1>
-        <nav className="flex space-x-3">
-          <a
-            href="/help"
-            className="nav-button text-xs px-2 py-1 rounded pointer-events-auto"
-          >
-            Help
-          </a>
-          <a
-            href="/login"
-            className="nav-button text-xs px-2 py-1 rounded pointer-events-auto"
-          >
-            Log in
-          </a>
-          <a
-            href="/signup"
-            className="nav-button text-xs px-2 py-1 rounded pointer-events-auto"
-          >
-            Sign up
-          </a>
-        </nav>
-      </header>
+      <Header />
 
       {/* Main content */}
       <main className="flex-1 flex items-center justify-center px-8 py-12 pointer-events-none">

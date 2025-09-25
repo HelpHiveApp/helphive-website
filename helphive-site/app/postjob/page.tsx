@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { signIn } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { HexBackground } from '@/components/ui/hex-background';
+import Header from '../components/Header';
 
 interface PlacePrediction {
   place_id: string;
@@ -16,6 +17,7 @@ interface PlacePrediction {
 }
 
 export default function PostJob() {
+  const { data: session, status } = useSession();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [jobType, setJobType] = useState('fixed');
@@ -31,6 +33,24 @@ export default function PostJob() {
   const [showPredictions, setShowPredictions] = useState(false);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
   const router = useRouter();
+
+  // Check if user is authenticated
+  const isAuthenticated = !!session?.user;
+  const showAuthModal = status !== 'loading' && !isAuthenticated;
+
+  const handleLogout = async () => {
+    await signOut({ callbackUrl: '/' });
+  };
+
+  const handleLogin = () => {
+    // Redirect to login page
+    window.location.href = '/login';
+  };
+
+  const handleSignup = () => {
+    // Redirect to signup page
+    window.location.href = '/signup';
+  };
 
   // You'll need to implement this function to get the current user email
   const getCurrentUserEmail = () => {
@@ -156,34 +176,56 @@ export default function PostJob() {
         />
       </div>
       
+      {/* Authentication Modal */}
+      {showAuthModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-auto">
+          {/* Backdrop with blur */}
+          <div 
+            className="absolute inset-0"
+            style={{ 
+              backgroundColor: 'rgba(0, 0, 0, 0.5)',
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)'
+            }}
+          />
+          
+          {/* Modal content */}
+          <div 
+            className="relative bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl"
+            style={{ backgroundColor: 'var(--off-white)' }}
+          >
+            <div className="text-center">
+              <h3 className="text-2xl font-bold mb-4" style={{ color: 'var(--dark-charcoal)' }}>
+                Log in to post a job
+              </h3>
+              <p className="mb-8" style={{ color: 'var(--mid-gray)' }}>
+                Join the hive to create job postings and connect with workers.
+              </p>
+              
+              <div className="flex flex-col gap-4">
+                <button
+                  onClick={handleLogin}
+                  className="w-full py-3 px-6 rounded-xl font-medium text-black transition-opacity duration-200 hover:opacity-90"
+                  style={{ backgroundColor: 'var(--accent)' }}
+                >
+                  Log In
+                </button>
+                <button
+                  onClick={handleSignup}
+                  className="w-full py-3 px-6 rounded-xl font-medium text-black transition-opacity duration-200 hover:opacity-90"
+                  style={{ backgroundColor: 'var(--accent)' }}
+                >
+                  Sign Up
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Main content - elevated above background */}
-      <div className="relative z-10 min-h-screen flex flex-col pointer-events-none" style={{ color: 'var(--dark-charcoal)' }}>
-      {/* Top bar */}
-      <header className="w-full flex items-center justify-between px-4 sm:px-8 md:px-16 lg:px-32 xl:px-60 2xl:px-80 py-2 border-b pointer-events-none" style={{ borderColor: 'var(--dark-charcoal)', backgroundColor: 'var(--dark-charcoal)' }}>
-        <h1 className="text-lg font-bold font-ubuntu" style={{ color: 'var(--primary)' }}>
-          <a href="/" className="pointer-events-auto">HelpHive</a>
-        </h1>
-        <nav className="flex space-x-3">
-          <a
-            href="/help"
-            className="nav-button text-xs px-2 py-1 rounded pointer-events-auto"
-          >
-            Help
-          </a>
-          <a
-            href="/login"
-            className="nav-button text-xs px-2 py-1 rounded pointer-events-auto"
-          >
-            Log in
-          </a>
-          <a
-            href="/signup"
-            className="nav-button text-xs px-2 py-1 rounded pointer-events-auto"
-          >
-            Sign up
-          </a>
-        </nav>
-      </header>
+      <div className={`relative z-10 min-h-screen flex flex-col pointer-events-none ${showAuthModal ? 'filter blur-sm' : ''}`} style={{ color: 'var(--dark-charcoal)' }}>
+      <Header />
 
       {/* Main content */}
       <main className="flex-1 flex items-center justify-center px-8 py-12 pointer-events-none">

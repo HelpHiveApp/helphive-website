@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { HexBackground } from '@/components/ui/hex-background';
 import Header from '../components/Header';
+import { supabase } from '../../lib/supabase';
 
 interface PlacePrediction {
   place_id: string;
@@ -140,26 +141,59 @@ export default function PostJob() {
     setError('');
     
     try {
-      // TODO: Implement job posting API call
+      // Validate required fields
+      if (!title.trim() || !description.trim() || !budget) {
+        setError('Please fill in all required fields.');
+        setIsLoading(false);
+        return;
+      }
+
+      // Get user ID from session
+      if (!session?.user?.id) {
+        setError('You must be logged in to post a job.');
+        setIsLoading(false);
+        return;
+      }
+
+      // Prepare job data for Supabase
       const jobData = {
-        title,
-        description,
-        job_type: jobType,
+        title: title.trim(),
+        description: description.trim(),
+        job_type: jobType as 'fixed' | 'hourly',
         budget: parseFloat(budget),
-        location,
-        required_skills: requiredSkills.split(',').map(skill => skill.trim()).filter(skill => skill),
+        location: location.trim() || null,
+        required_skills: requiredSkills 
+          ? requiredSkills.split(',').map(skill => skill.trim()).filter(skill => skill.length > 0)
+          : [],
         start_date: startDate || null,
         end_date: endDate || null,
+        poster_id: session.user.id,
+        status: 'open' as const
       };
 
-      console.log('Job data to submit:', jobData);
+      console.log('Submitting job data:', jobData);
+
+      // Insert job into Supabase
+      const { data, error: supabaseError } = await supabase
+        .from('jobs')
+        .insert([jobData])
+        .select()
+        .single();
+
+      if (supabaseError) {
+        console.error('Supabase error:', supabaseError);
+        setError('Failed to create job posting. Please try again.');
+        setIsLoading(false);
+        return;
+      }
+
+      console.log('Job created successfully:', data);
       
-      // For now, just simulate success
-      setTimeout(() => {
-        router.push('/availablejobs');
-      }, 1000);
+      // Redirect to available jobs page on success
+      router.push('/availablejobs');
       
     } catch (error) {
+      console.error('Error creating job:', error);
       setError('An error occurred. Please try again.');
       setIsLoading(false);
     }

@@ -5,7 +5,6 @@ import { useSession, signOut } from 'next-auth/react';
 import JobCard, { Job } from '../components/JobCard';
 import { supabase } from '../../lib/supabase';
 import { HexBackground } from '@/components/ui/hex-background';
-import Header from '../components/Header';
 
 export default function AvailableJobs() {
   const { data: session, status } = useSession();
@@ -225,10 +224,8 @@ export default function AvailableJobs() {
 
       {/* Main content with conditional blur */}
       <div className={showAuthModal || showAppModal ? 'filter blur-sm' : ''}>
-        <Header />
-
-      {/* Main content */}
-      <main className="flex-1 px-8 lg:px-16 py-12 pointer-events-none">
+        {/* Main content */}
+        <div className="px-8 lg:px-16 py-12 pointer-events-none">
         {/* Page header */}
         <div className="max-w-6xl mx-auto mb-8">
           <h2 className="text-3xl lg:text-4xl font-bold mb-4" style={{ color: 'var(--dark-charcoal)' }}>
@@ -316,17 +313,8 @@ export default function AvailableJobs() {
             </div>
           )}
         </div>
-      </main>
-
-        {/* Footer */}
-        <footer className="w-full py-4 text-center pointer-events-none">
-          <p className="text-xs" style={{ color: 'var(--mid-gray)' }}>
-            <a href="/legal/terms" className="hover:underline pointer-events-auto" style={{ color: 'var(--mid-gray)' }}>Terms</a>
-            {' & '}
-            <a href="/legal/privacy" className="hover:underline pointer-events-auto" style={{ color: 'var(--mid-gray)' }}>Privacy</a>
-          </p>
-        </footer>
-      </div>
+        </div>
+        </div>
       </div>
     </div>
   );

@@ -1,14 +1,9 @@
 // /app/legal/terms/page.tsx
 import React from "react";
-import Header from "../../components/Header";
 
 export default function TermsPage() {
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--off-white)', color: 'var(--dark-charcoal)' }}>
-      <Header />
-
-      {/* Main content */}
-      <main className="flex-1 max-w-4xl mx-auto px-8 py-12" style={{ fontFamily: "Arial, sans-serif", lineHeight: 1.6 }}>
+    <div className="max-w-4xl mx-auto px-8 py-12" style={{ backgroundColor: 'var(--off-white)', color: 'var(--dark-charcoal)', fontFamily: "Arial, sans-serif", lineHeight: 1.6 }}>
         <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--primary)' }}>HelpHive Terms & Conditions</h1>
         <p className="mb-8" style={{ color: 'var(--mid-gray)' }}><em>Last updated: September 2025</em></p>
 
@@ -39,16 +34,6 @@ export default function TermsPage() {
 
         <h2 className="text-xl font-semibold mb-4 mt-8" style={{ color: 'var(--primary)' }}>8. Contact</h2>
         <p className="mb-6" style={{ color: 'var(--dark-charcoal)' }}>If you have questions, contact us at: <a href="mailto:support@helphive.app" style={{ color: 'var(--slate-blue)' }} className="hover:underline">support@helphive.app</a></p>
-      </main>
-
-      {/* Footer */}
-      <footer className="w-full py-4 text-center">
-        <p className="text-xs" style={{ color: 'var(--mid-gray)' }}>
-          <a href="/legal/terms" className="hover:underline" style={{ color: 'var(--mid-gray)' }}>Terms</a>
-          {' & '}
-          <a href="/legal/privacy" className="hover:underline" style={{ color: 'var(--mid-gray)' }}>Privacy</a>
-        </p>
-      </footer>
     </div>
   );
 }

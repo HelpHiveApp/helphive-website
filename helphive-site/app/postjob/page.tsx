@@ -5,7 +5,6 @@ import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { HexBackground } from '@/components/ui/hex-background';
-import Header from '../components/Header';
 import { supabase } from '../../lib/supabase';
 
 interface PlacePrediction {
@@ -259,10 +258,8 @@ export default function PostJob() {
 
       {/* Main content - elevated above background */}
       <div className={`relative z-10 min-h-screen flex flex-col pointer-events-none ${showAuthModal ? 'filter blur-sm' : ''}`} style={{ color: 'var(--dark-charcoal)' }}>
-      <Header />
-
       {/* Main content */}
-      <main className="flex-1 flex items-center justify-center px-8 py-12 pointer-events-none">
+      <div className="flex-1 flex items-center justify-center px-8 py-12 pointer-events-none">
         <div className="w-full max-w-2xl">
           <div 
             className="rounded-2xl p-8 shadow-lg pointer-events-auto"
@@ -522,16 +519,7 @@ export default function PostJob() {
             </form>
           </div>
         </div>
-      </main>
-
-      {/* Footer */}
-      <footer className="w-full py-4 text-center pointer-events-none">
-        <p className="text-xs" style={{ color: 'var(--mid-gray)' }}>
-          <a href="/legal/terms" className="hover:underline pointer-events-auto" style={{ color: 'var(--mid-gray)' }}>Terms</a>
-          {' & '}
-          <a href="/legal/privacy" className="hover:underline pointer-events-auto" style={{ color: 'var(--mid-gray)' }}>Privacy</a>
-        </p>
-      </footer>
+      </div>
       </div>
     </div>
   );

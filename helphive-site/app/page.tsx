@@ -4,7 +4,8 @@ import { useState, useEffect, useRef } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import axios from 'axios';
 import { HexBackground } from '@/components/ui/hex-background';
-import Header from './components/Header';
+import HowItWorks from "./components/HowItWorks";
+import Features from './components/Features';
 
 interface PlacePrediction {
   place_id: string;
@@ -142,15 +143,13 @@ export default function Home() {
       
       {/* Main content - can grow naturally */}
       <div className="relative z-10 min-h-screen flex flex-col pointer-events-none" style={{ color: 'var(--dark-charcoal)' }}>
-        <Header />
-
-      {/* Main content area */}
-        <main>
+        {/* Main content area */}
+        <div>
           {/* Combined section - Post jobs and Find work */}
-          <section className="flex flex-col items-center justify-center px-8 lg:px-16 py-20 gap-16 min-h-screen pointer-events-none">
+          <section className="flex flex-col items-center justify-center px-8 lg:px-16 pb-4 gap-12 min-h-screen pointer-events-none">
             
             {/* Post a job section */}
-            <div className="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-16 w-full max-w-6xl">
+            <div className="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-16 w-full max-w-6xl -mt-37">
               {/* Left content */}
               <div className="w-full lg:w-1/2 max-w-lg text-center lg:text-left">
                 <h2 className="text-4xl lg:text-5xl font-bold mb-6" style={{ color: 'var(--dark-charcoal)' }}>
@@ -263,22 +262,46 @@ export default function Home() {
           </section>
 
           {/* HERO SECTION OVER */}
-          {/* Divider */}
-          {/* <div className="w-full max-w-4xl h-px" style={{ backgroundColor: 'var(--light-gray)' }}></div> */}
-
-          {/* HelpHive Logo */}
-          <section className="flex justify-center px-8 lg:px-16 pb-8 pt-4 pointer-events-none">
+          
+          {/* HelpHive Logo - Section Divider */}
+          <section className="flex justify-center px-8 lg:px-16 py-4 -mt-47 pointer-events-none">
             <div className="flex justify-center">
               <img
                 src="/HelpHiveLogo.png"
                 alt="HelpHive Logo"
-                className="h-24 w-auto"
+                className="h-16 w-auto"
+              />
+            </div>
+          </section>
+          
+          <HowItWorks />
+          
+          {/* HelpHive Logo - Section Divider */}
+          <section className="flex justify-center px-8 lg:px-16 py-4 pointer-events-none">
+            <div className="flex justify-center">
+              <img
+                src="/HelpHiveLogo.png"
+                alt="HelpHive Logo"
+                className="h-16 w-auto"
+              />
+            </div>
+          </section>
+          
+          <Features />
+          
+          {/* HelpHive Logo - Section Divider */}
+          <section className="flex justify-center px-8 lg:px-16 py-4 pointer-events-none">
+            <div className="flex justify-center">
+              <img
+                src="/HelpHiveLogo.png"
+                alt="HelpHive Logo"
+                className="h-16 w-auto"
               />
             </div>
           </section>
 
           {/* Mobile app promotion text */}
-          <section className="flex justify-center px-8 lg:px-16 pt-8 pb-8 pointer-events-none">
+          <section className="flex justify-center px-8 lg:px-16 pt-4 pb-4 pointer-events-none">
             <div className="text-center max-w-4xl">
               <p className="text-lg italic" style={{ color: 'var(--mid-gray)' }}>
                 Core hiring and job management features are available in our mobile app — download to manage applications and chat with candidates.
@@ -287,7 +310,7 @@ export default function Home() {
           </section>
 
           {/* Feature comparison table */}
-          <section className="flex justify-center px-8 lg:px-16 py-8 pointer-events-none">
+          <section className="flex justify-center px-8 lg:px-16 py-4 pointer-events-none">
             <div className="w-full max-w-2xl">
               <div className="overflow-x-auto">
                 <table className="w-full border-collapse rounded-lg overflow-hidden shadow-sm" style={{ backgroundColor: 'var(--off-white)', border: '1px solid var(--light-gray)' }}>
@@ -347,16 +370,7 @@ export default function Home() {
               </div>
             </div>
           </section>
-        </main>
-
-      {/* Footer */}
-      <footer className="w-full py-4 text-center pointer-events-auto">
-        <p className="text-xs" style={{ color: 'var(--mid-gray)' }}>
-          <a href="/legal/terms" className="hover:underline" style={{ color: 'var(--mid-gray)' }}>Terms</a>
-          {' & '}
-          <a href="/legal/privacy" className="hover:underline" style={{ color: 'var(--mid-gray)' }}>Privacy</a>
-        </p>
-      </footer>
+        </div>
       </div>
     </div>
   );

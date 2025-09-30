@@ -25,7 +25,7 @@ export default function Header({ showAuthButtons = true }: HeaderProps) {
   };
 
   return (
-    <header className="w-full flex items-center justify-between px-4 sm:px-8 md:px-16 lg:px-32 xl:px-60 2xl:px-80 py-2 border-b pointer-events-none" style={{ borderColor: 'var(--dark-charcoal)', backgroundColor: 'var(--dark-charcoal)' }}>
+    <header className="w-full flex items-center justify-between px-4 sm:px-8 md:px-16 lg:px-32 xl:px-60 2xl:px-80 py-1 border-b pointer-events-none" style={{ borderColor: 'var(--dark-charcoal)', backgroundColor: 'var(--dark-charcoal)' }}>
       <div className="flex items-center space-x-2">
         <a href="/" className="pointer-events-auto flex items-center space-x-2">
           <img

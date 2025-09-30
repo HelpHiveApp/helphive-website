@@ -149,10 +149,10 @@ export default function Home() {
         {/* Main content area */}
         <div>
           {/* Combined section - Post jobs and Find work */}
-          <section className="flex flex-col items-center justify-center px-8 lg:px-16 pb-4 gap-12 min-h-screen pointer-events-none">
+          <section className="flex flex-col items-center justify-center px-8 lg:px-16 pt-8 md:pt-4 lg:pt-2 pb-4 gap-12 min-h-screen pointer-events-none">
             
             {/* Post a job section */}
-            <div className="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-16 w-full max-w-6xl -mt-37">
+            <div className="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-16 w-full max-w-6xl">
               {/* Left content */}
               <div className="w-full lg:w-1/2 max-w-lg text-center lg:text-left">
                 <h2 className="text-4xl lg:text-5xl font-bold mb-6" style={{ color: 'var(--dark-charcoal)' }}>
@@ -267,7 +267,7 @@ export default function Home() {
           {/* HERO SECTION OVER */}
           
           {/* HelpHive Logo - Section Divider */}
-          <section className="flex justify-center px-8 lg:px-16 py-4 -mt-47 pointer-events-none">
+          <section className="flex justify-center px-8 lg:px-16 py-4 pointer-events-none">
             <div className="flex justify-center">
               <img
                 src="/HelpHiveLogo.png"

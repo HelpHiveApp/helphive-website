@@ -7,6 +7,8 @@ import { HexBackground } from '@/components/ui/hex-background';
 import HowItWorks from "./components/HowItWorks";
 import Features from './components/Features';
 import TrustAndAbout from './components/TrustAndAbout';
+import FeatureComparisonTable from './components/FeatureComparisonTable';
+import FinalCTA from './components/FinalCTA';
 
 interface PlacePrediction {
   place_id: string;
@@ -301,6 +303,19 @@ export default function Home() {
             </div>
           </section>
 
+          <FeatureComparisonTable />
+
+          {/* HelpHive Logo - Section Divider */}
+          <section className="flex justify-center px-8 lg:px-16 py-4 pointer-events-none">
+            <div className="flex justify-center">
+              <img
+                src="/HelpHiveLogo.png"
+                alt="HelpHive Logo"
+                className="h-16 w-auto"
+              />
+            </div>
+          </section>
+
           <TrustAndAbout />
           
           {/* HelpHive Logo - Section Divider */}
@@ -314,76 +329,8 @@ export default function Home() {
             </div>
           </section>
 
-          {/* Mobile app promotion text */}
-          <section className="flex justify-center px-8 lg:px-16 pt-4 pb-4 pointer-events-none">
-            <div className="text-center max-w-4xl">
-              <p className="text-lg italic" style={{ color: 'var(--mid-gray)' }}>
-                Core hiring and job management features are available in our mobile app — download to manage applications and chat with candidates.
-              </p>
-            </div>
-          </section>
-
-          {/* Feature comparison table */}
-          <section className="flex justify-center px-8 lg:px-16 py-4 pointer-events-none">
-            <div className="w-full max-w-2xl">
-              <div className="overflow-x-auto">
-                <table className="w-full border-collapse rounded-lg overflow-hidden shadow-sm" style={{ backgroundColor: 'var(--off-white)', border: '1px solid var(--light-gray)' }}>
-                  <thead>
-                    <tr style={{ backgroundColor: 'var(--light-gray)' }}>
-                      <th className="px-6 py-4 text-left font-semibold" style={{ color: 'var(--dark-charcoal)', borderBottom: '1px solid var(--mid-gray)' }}>
-                        Feature
-                      </th>
-                      <th className="px-6 py-4 text-left font-semibold" style={{ color: 'var(--dark-charcoal)', borderBottom: '1px solid var(--mid-gray)' }}>
-                        On Web / On App
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr style={{ borderBottom: '1px solid var(--light-gray)' }}>
-                      <td className="px-6 py-4" style={{ color: 'var(--dark-charcoal)' }}>
-                        Post jobs
-                      </td>
-                      <td className="px-6 py-4" style={{ color: 'var(--dark-charcoal)' }}>
-                        ✅ Web & App
-                      </td>
-                    </tr>
-                    <tr style={{ borderBottom: '1px solid var(--light-gray)' }}>
-                      <td className="px-6 py-4" style={{ color: 'var(--dark-charcoal)' }}>
-                        Browse jobs
-                      </td>
-                      <td className="px-6 py-4" style={{ color: 'var(--dark-charcoal)' }}>
-                        ✅ Web & App
-                      </td>
-                    </tr>
-                    <tr style={{ borderBottom: '1px solid var(--light-gray)' }}>
-                      <td className="px-6 py-4" style={{ color: 'var(--dark-charcoal)' }}>
-                        Messaging applicants / hirers
-                      </td>
-                      <td className="px-6 py-4" style={{ color: 'var(--dark-charcoal)' }}>
-                        📱 App Only
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="px-6 py-4" style={{ color: 'var(--dark-charcoal)' }}>
-                        Manage applications
-                      </td>
-                      <td className="px-6 py-4" style={{ color: 'var(--dark-charcoal)' }}>
-                        📱 App Only
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="px-6 py-4" style={{ color: 'var(--dark-charcoal)' }}>
-                        Manage Jobs
-                      </td>
-                      <td className="px-6 py-4" style={{ color: 'var(--dark-charcoal)' }}>
-                        📱 App Only
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </section>
+          <FinalCTA />
+          
         </div>
       </div>
     </div>

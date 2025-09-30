@@ -1,5 +1,5 @@
 // components/TrustAndAbout.tsx
-import { Shield, Lock, Users } from "lucide-react";
+import { Shield, Lock, Users, ShieldPlus } from "lucide-react";
 
 export default function TrustAndAbout() {
   return (
@@ -39,6 +39,17 @@ export default function TrustAndAbout() {
             </p>
           </div>
         </div>
+
+        {/* Coming Soon Card - Centered below */}
+        <div className="flex justify-center mt-8">
+          <div className="p-4 rounded-2xl shadow pointer-events-auto max-w-sm" style={{ backgroundColor: 'var(--off-white)' }}>
+            <ShieldPlus className="h-8 w-8 mb-3 mx-auto" style={{ color: 'var(--accent)' }} />
+            <h3 className="font-semibold text-base mb-2" style={{ color: 'var(--dark-charcoal)' }}>Coming Soon: Verified Users</h3>
+            <p className="text-xs" style={{ color: 'var(--mid-gray)' }}>
+              We'll soon let workers and hirers verify their accounts for even safer connections.
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Divider Logo */}
@@ -51,18 +62,20 @@ export default function TrustAndAbout() {
       </div>
 
       {/* About */}
-      <div className="max-w-4xl mx-auto text-center">
-        <h2 className="text-3xl font-bold mb-6" style={{ color: 'var(--primary)' }}>About HelpHive</h2>
-        <p className="mb-6" style={{ color: 'var(--mid-gray)' }}>
-          HelpHive makes it simple to get things done. Whether you need a hand
-          with a task or want to earn from quick jobs, our mission is to connect
-          people in the community for fast, fair opportunities.
-        </p>
-        <p style={{ color: 'var(--mid-gray)' }}>
-          Post jobs in seconds, apply with just a few taps, and stay connected
-          with built-in messaging. We focus on simplicity, trust, and local
-          connections.
-        </p>
+      <div className="max-w-4xl mx-auto">
+        <div className="p-8 rounded-2xl shadow text-center pointer-events-auto" style={{ backgroundColor: 'var(--off-white)' }}>
+          <h2 className="text-3xl font-bold mb-6" style={{ color: 'var(--primary)' }}>About HelpHive</h2>
+          <p className="mb-6" style={{ color: 'var(--mid-gray)' }}>
+            HelpHive makes it simple to get things done. Whether you need a hand
+            with a task or want to earn from quick jobs, our mission is to connect
+            people in the community for fast, fair opportunities.
+          </p>
+          <p style={{ color: 'var(--mid-gray)' }}>
+            Post jobs in seconds, apply with just a few taps, and stay connected
+            with built-in messaging. We focus on simplicity, trust, and local
+            connections.
+          </p>
+        </div>
       </div>
     </section>
   );

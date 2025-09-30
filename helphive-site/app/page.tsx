@@ -6,6 +6,7 @@ import axios from 'axios';
 import { HexBackground } from '@/components/ui/hex-background';
 import HowItWorks from "./components/HowItWorks";
 import Features from './components/Features';
+import TrustAndAbout from './components/TrustAndAbout';
 
 interface PlacePrediction {
   place_id: string;
@@ -288,6 +289,19 @@ export default function Home() {
           </section>
           
           <Features />
+          
+          {/* HelpHive Logo - Section Divider */}
+          <section className="flex justify-center px-8 lg:px-16 py-4 pointer-events-none">
+            <div className="flex justify-center">
+              <img
+                src="/HelpHiveLogo.png"
+                alt="HelpHive Logo"
+                className="h-16 w-auto"
+              />
+            </div>
+          </section>
+
+          <TrustAndAbout />
           
           {/* HelpHive Logo - Section Divider */}
           <section className="flex justify-center px-8 lg:px-16 py-4 pointer-events-none">

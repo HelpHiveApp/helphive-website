@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { supabase } from '../../../../lib/supabase'
+import { registerStreamChatUser } from '../../../../lib/streamchat'
 
 // Define the signup schema for validation
 const signupSchema = z.object({
@@ -89,6 +90,15 @@ export async function POST(request: NextRequest) {
         } catch (profileError) {
           console.error('Warning: Failed to create profile record:', profileError);
           // Continue without profile data if profile creation fails
+        }
+
+        // Register user with StreamChat
+        try {
+          await registerStreamChatUser(data.user.id);
+          console.log('User registered with StreamChat successfully');
+        } catch (streamChatError) {
+          console.error('Warning: Failed to register user with StreamChat:', streamChatError);
+          // Continue without StreamChat if it fails - user can still use the app
         }
 
         return NextResponse.json(

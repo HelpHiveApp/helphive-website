@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useSession, signOut } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
+import { handleLogout as logout } from '@/lib/logout';
 
 interface HeaderProps {
   showAuthButtons?: boolean;
@@ -12,7 +13,7 @@ export default function Header({ showAuthButtons = true }: HeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleLogout = async () => {
-    await signOut({ callbackUrl: '/' });
+    await logout('/');
     setIsMobileMenuOpen(false);
   };
 

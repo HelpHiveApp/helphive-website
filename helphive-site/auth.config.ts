@@ -2,6 +2,7 @@ import type { NextAuthConfig } from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
 import { z } from 'zod'
 import { supabase } from './lib/supabase'
+import { registerStreamChatUser } from './lib/streamchat'
 
 // Define the login schema for validation
 const loginSchema = z.object({
@@ -40,6 +41,15 @@ export default {
           }
 
           if (data.user) {
+            // Register/update user with StreamChat on login
+            try {
+              await registerStreamChatUser(data.user.id);
+              console.log('User registered with StreamChat on login');
+            } catch (streamChatError) {
+              console.error('Warning: Failed to register user with StreamChat on login:', streamChatError);
+              // Continue with login even if StreamChat registration fails
+            }
+
             return {
               id: data.user.id,
               email: data.user.email!,

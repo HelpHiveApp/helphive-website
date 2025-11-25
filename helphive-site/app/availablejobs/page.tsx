@@ -14,6 +14,8 @@ export default function AvailableJobs() {
   const [locationFilter, setLocationFilter] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
   const [showAppModal, setShowAppModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const jobsPerPage = 9;
   
   // Check if user is authenticated
   const isAuthenticated = !!session?.user;
@@ -95,6 +97,23 @@ export default function AvailableJobs() {
     
     return matchesSearch && matchesLocation && matchesType;
   });
+
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
+  const startIndex = (currentPage - 1) * jobsPerPage;
+  const endIndex = startIndex + jobsPerPage;
+  const currentJobs = filteredJobs.slice(startIndex, endIndex);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, locationFilter, typeFilter]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    // Scroll to top of jobs section
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <div className="relative w-full">
@@ -302,15 +321,69 @@ export default function AvailableJobs() {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredJobs.map((job) => (
-                <JobCard
-                  key={job.id}
-                  job={job}
-                  onApply={handleApply}
-                />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {currentJobs.map((job) => (
+                  <JobCard
+                    key={job.id}
+                    job={job}
+                    onApply={handleApply}
+                  />
+                ))}
+              </div>
+
+              {/* Pagination Controls */}
+              {totalPages > 1 && (
+                <div className="flex justify-center items-center gap-2 mt-8">
+                  {/* Previous Button */}
+                  <button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className="px-4 py-2 rounded-lg font-medium transition-opacity duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                    style={{ 
+                      backgroundColor: 'var(--accent)',
+                      color: 'black'
+                    }}
+                  >
+                    Previous
+                  </button>
+
+                  {/* Page Numbers */}
+                  <div className="flex gap-2">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                      <button
+                        key={page}
+                        onClick={() => handlePageChange(page)}
+                        className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+                          currentPage === page 
+                            ? 'scale-110' 
+                            : 'hover:opacity-80'
+                        }`}
+                        style={{ 
+                          backgroundColor: currentPage === page ? 'var(--accent)' : 'var(--light-gray)',
+                          color: currentPage === page ? 'black' : 'var(--dark-charcoal)'
+                        }}
+                      >
+                        {page}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Next Button */}
+                  <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className="px-4 py-2 rounded-lg font-medium transition-opacity duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                    style={{ 
+                      backgroundColor: 'var(--accent)',
+                      color: 'var(--dark-charcoal)'
+                    }}
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
         </div>

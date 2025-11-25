@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { HexBackground } from '@/components/ui/hex-background';
-import Header from '../components/Header';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -51,7 +50,7 @@ export default function Login() {
       
       {/* Main content - elevated above background */}
       <div className="relative z-10 min-h-screen flex flex-col pointer-events-none" style={{ color: 'var(--dark-charcoal)' }}>
-      <Header />
+      {/* <Header /> */}
 
       {/* Main content */}
       <main className="flex-1 flex items-center justify-center px-8 py-12 pointer-events-none">
@@ -175,15 +174,6 @@ export default function Login() {
           </div>
         </div>
       </main>
-
-      {/* Footer */}
-      <footer className="w-full py-4 text-center pointer-events-none">
-        <p className="text-xs" style={{ color: 'var(--mid-gray)' }}>
-          <a href="/legal/terms" className="hover:underline pointer-events-auto" style={{ color: 'var(--mid-gray)' }}>Terms</a>
-          {' & '}
-          <a href="/legal/privacy" className="hover:underline pointer-events-auto" style={{ color: 'var(--mid-gray)' }}>Privacy</a>
-        </p>
-      </footer>
       </div>
     </div>
   );

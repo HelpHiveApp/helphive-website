@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Header from '@/app/components/Header';
 import Footer from '@/app/components/Footer';
 import { HexBackground } from '@/components/ui/hex-background';
 
-export default function VerifyEmail() {
+function VerifyEmailContent() {
   const searchParams = useSearchParams();
   const [email, setEmail] = useState('');
 
@@ -131,5 +131,32 @@ export default function VerifyEmail() {
         {/* <Footer /> */}
       </div>
     </div>
+  );
+}
+
+export default function VerifyEmail() {
+  return (
+    <Suspense fallback={
+      <div className="relative w-full min-h-screen">
+        <div className="absolute inset-0 z-0 h-full w-full">
+          <HexBackground
+            hexagonSize={75}
+            hexagonMargin={4}
+            className="w-full min-h-full"
+          />
+        </div>
+        <div className="relative z-10 min-h-screen flex flex-col" style={{ color: 'var(--dark-charcoal)' }}>
+          <Header />
+          <main className="flex-1 flex items-center justify-center">
+            <div className="text-center" style={{ color: 'var(--mid-gray)' }}>
+              Loading...
+            </div>
+          </main>
+          <Footer />
+        </div>
+      </div>
+    }>
+      <VerifyEmailContent />
+    </Suspense>
   );
 }

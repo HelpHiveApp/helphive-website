@@ -250,7 +250,7 @@ function CheckoutContent() {
                   onClick={handleCompleteCheckout}
                   disabled={isLoading}
                 >
-                  {isLoading ? 'Processing...' : 'Complete Checkout'}
+                  {isLoading ? 'Processing...' : 'Confirm & Post Job'}
                 </button>
 
                 <button

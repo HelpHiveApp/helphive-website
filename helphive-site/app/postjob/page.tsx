@@ -101,10 +101,12 @@ export default function PostJob() {
             { value: "ZAR", label: "🇿🇦 ZAR - Rand" },
           ];
           setCurrencyOptions(defaultOptions);
-          setCurrency(defaultOptions[0]);
+          // Don't set a default currency - leave it null
           // Set default currency data with 0 values
           const dataMap = new Map();
-          dataMap.set('USD', { service_fee: 0, discount: 0 });
+          defaultOptions.forEach(opt => {
+            dataMap.set(opt.value, { service_fee: 0, discount: 0 });
+          });
           setCurrencyData(dataMap);
         } else if (data) {
           const options = data.map((rate: any) => ({
@@ -123,9 +125,7 @@ export default function PostJob() {
           });
           setCurrencyData(dataMap);
           
-          // Set default to USD or first option
-          const usdOption = options.find(opt => opt.value === 'USD');
-          setCurrency(usdOption || options[0]);
+          // Don't set a default currency - leave it null
         }
       } catch (error) {
         console.error('Error fetching currencies:', error);
@@ -266,6 +266,32 @@ export default function PostJob() {
         return;
       }
 
+      // Validate currency is selected
+      if (!currency?.value) {
+        setError('Please select a currency.');
+        setIsLoading(false);
+        return;
+      }
+
+      // Validate location, start date, and end date are provided
+      if (!location.trim()) {
+        setError('Please enter a location.');
+        setIsLoading(false);
+        return;
+      }
+
+      if (!startDate) {
+        setError('Please select a start date.');
+        setIsLoading(false);
+        return;
+      }
+
+      if (!endDate) {
+        setError('Please select an end date.');
+        setIsLoading(false);
+        return;
+      }
+
       // Get user ID from session
       if (!session?.user?.id) {
         setError('You must be logged in to post a job.');
@@ -274,7 +300,7 @@ export default function PostJob() {
       }
 
       // Prepare job data for Supabase
-      const selectedCurrency = currency?.value || 'USD';
+      const selectedCurrency = currency.value;
       const currencyInfo = currencyData.get(selectedCurrency) || { service_fee: 0, discount: 0 };
       
       const jobData = {
@@ -624,7 +650,7 @@ export default function PostJob() {
                     className="block text-sm font-medium mb-2"
                     style={{ color: 'var(--dark-charcoal)' }}
                   >
-                    Start Date
+                    Start Date *
                   </label>
                   <input
                     type="date"
@@ -646,7 +672,7 @@ export default function PostJob() {
                     className="block text-sm font-medium mb-2"
                     style={{ color: 'var(--dark-charcoal)' }}
                   >
-                    End Date
+                    End Date *
                   </label>
                   <input
                     type="date"
@@ -679,7 +705,7 @@ export default function PostJob() {
                   className="block text-sm font-medium mb-2"
                   style={{ color: 'var(--dark-charcoal)' }}
                 >
-                  Location
+                  Location *
                 </label>
                 <input
                   type="text"

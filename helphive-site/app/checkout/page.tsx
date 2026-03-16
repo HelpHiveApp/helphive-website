@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { HexBackground } from '@/components/ui/hex-background';
 import { supabase } from '../../lib/supabase';
@@ -26,7 +26,7 @@ interface JobData {
   discount: number;
 }
 
-export default function Checkout() {
+function CheckoutContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isAuthorized, setIsAuthorized] = useState(false);
@@ -270,5 +270,13 @@ export default function Checkout() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function Checkout() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CheckoutContent />
+    </Suspense>
   );
 }

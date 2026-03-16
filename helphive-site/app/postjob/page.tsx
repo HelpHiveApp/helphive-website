@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
+import Select from 'react-select';
 import { HexBackground } from '@/components/ui/hex-background';
 import { supabase } from '../../lib/supabase';
 
@@ -16,12 +17,29 @@ interface PlacePrediction {
   };
 }
 
+// Country code to flag emoji mapping
+const countryCodeToFlag = (countryCode: string) => {
+  if (!countryCode || countryCode.length !== 2) return '';
+  const codePoints = countryCode
+    .toUpperCase()
+    .split('')
+    .map(char => 127397 + char.charCodeAt(0));
+  return String.fromCodePoint(...codePoints);
+};
+
+const jobTypeOptions = [
+  { value: "fixed", label: "Fixed Price" },
+  { value: "hourly", label: "Hourly Rate" },
+];
+
 export default function PostJob() {
   const { data: session, status } = useSession();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [jobType, setJobType] = useState('fixed');
+  const [jobType, setJobType] = useState<{ value: string; label: string } | null>(jobTypeOptions[0]);
   const [budget, setBudget] = useState('');
+  const [currency, setCurrency] = useState<{ value: string; label: string } | null>(null);
+  const [currencyOptions, setCurrencyOptions] = useState<{ value: string; label: string }[]>([]);
   const [location, setLocation] = useState('');
   const [requiredSkills, setRequiredSkills] = useState('');
   const [startDate, setStartDate] = useState('');
@@ -57,6 +75,44 @@ export default function PostJob() {
     // For now, return a placeholder - you can implement proper user authentication
     return 'user@example.com';
   };
+
+  // Fetch currency rates from Supabase
+  useEffect(() => {
+    const fetchCurrencies = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('currency_rates')
+          .select('currency_code, country_code')
+          .order('currency_code', { ascending: true });
+
+        if (error) {
+          console.error('Error fetching currencies:', error);
+          // Fallback to default currencies
+          const defaultOptions = [
+            { value: "USD", label: "🇺🇸 USD - US Dollar" },
+            { value: "EUR", label: "🇪🇺 EUR - Euro" },
+            { value: "GBP", label: "🇬🇧 GBP - British Pound" },
+            { value: "ZAR", label: "🇿🇦 ZAR - Rand" },
+          ];
+          setCurrencyOptions(defaultOptions);
+          setCurrency(defaultOptions[0]);
+        } else if (data) {
+          const options = data.map((rate: any) => ({
+            value: rate.currency_code,
+            label: `${countryCodeToFlag(rate.country_code)} ${rate.currency_code}`
+          }));
+          setCurrencyOptions(options);
+          // Set default to USD or first option
+          const usdOption = options.find(opt => opt.value === 'USD');
+          setCurrency(usdOption || options[0]);
+        }
+      } catch (error) {
+        console.error('Error fetching currencies:', error);
+      }
+    };
+
+    fetchCurrencies();
+  }, []);
 
   // Debounced search effect for location
   useEffect(() => {
@@ -158,8 +214,9 @@ export default function PostJob() {
       const jobData = {
         title: title.trim(),
         description: description.trim(),
-        job_type: jobType as 'fixed' | 'hourly',
+        job_type: (jobType?.value || 'fixed') as 'fixed' | 'hourly',
         budget: parseFloat(budget),
+        currency_code: currency?.value || 'USD',
         location: location.trim() || null,
         required_skills: requiredSkills 
           ? requiredSkills.split(',').map(skill => skill.trim()).filter(skill => skill.length > 0)
@@ -288,54 +345,70 @@ export default function PostJob() {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label 
-                  htmlFor="title" 
-                  className="block text-sm font-medium mb-2"
-                  style={{ color: 'var(--dark-charcoal)' }}
-                >
-                  Job Title *
-                </label>
-                <input
-                  type="text"
-                  id="title"
-                  required
-                  className="w-full px-4 py-3 rounded-xl border outline-none focus:ring-2"
-                  style={{ 
-                    borderColor: 'var(--mid-gray)', 
-                    backgroundColor: 'var(--light-gray)',
-                    color: 'var(--dark-charcoal)'
-                  }}
-                  placeholder="e.g. Web Developer Needed"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                />
+              {/* Job Details Section */}
+              <div className="space-y-4">
+                <h3 className="text-xl font-semibold" style={{ color: 'var(--dark-charcoal)' }}>
+                  Job Details
+                </h3>
+                
+                <div className="ml-4 space-y-4">
+                  <div>
+                    <label 
+                      htmlFor="title" 
+                      className="block text-sm font-medium mb-2"
+                      style={{ color: 'var(--dark-charcoal)' }}
+                    >
+                      Job Title *
+                    </label>
+                    <input
+                      type="text"
+                      id="title"
+                      required
+                      className="w-full px-4 py-3 rounded-xl border outline-none focus:ring-2"
+                      style={{ 
+                        borderColor: 'var(--mid-gray)', 
+                        backgroundColor: 'var(--light-gray)',
+                        color: 'var(--dark-charcoal)'
+                      }}
+                      placeholder="e.g. Web Developer Needed"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                    />
+                  </div>
+
+                  <div>
+                    <label 
+                      htmlFor="description" 
+                      className="block text-sm font-medium mb-2"
+                      style={{ color: 'var(--dark-charcoal)' }}
+                    >
+                      Job Description *
+                    </label>
+                    <textarea
+                      id="description"
+                      required
+                      rows={4}
+                      className="w-full px-4 py-3 rounded-xl border outline-none focus:ring-2 resize-none"
+                      style={{ 
+                        borderColor: 'var(--mid-gray)', 
+                        backgroundColor: 'var(--light-gray)',
+                        color: 'var(--dark-charcoal)'
+                      }}
+                      placeholder="Describe the job requirements and expectations..."
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                    />
+                  </div>
+                </div>
               </div>
 
-              <div>
-                <label 
-                  htmlFor="description" 
-                  className="block text-sm font-medium mb-2"
-                  style={{ color: 'var(--dark-charcoal)' }}
-                >
-                  Job Description *
-                </label>
-                <textarea
-                  id="description"
-                  required
-                  rows={4}
-                  className="w-full px-4 py-3 rounded-xl border outline-none focus:ring-2 resize-none"
-                  style={{ 
-                    borderColor: 'var(--mid-gray)', 
-                    backgroundColor: 'var(--light-gray)',
-                    color: 'var(--dark-charcoal)'
-                  }}
-                  placeholder="Describe the job requirements and expectations..."
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                />
-              </div>
+              {/* Budget & Timeline Section */}
+              <div className="space-y-4">
+                <h3 className="text-xl font-semibold" style={{ color: 'var(--dark-charcoal)' }}>
+                  Budget & Timeline
+                </h3>
 
+              <div className="ml-4 space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label 
@@ -345,21 +418,100 @@ export default function PostJob() {
                   >
                     Job Type *
                   </label>
-                  <select
+                  <Select
                     id="jobType"
-                    required
-                    className="w-full px-4 py-3 rounded-xl border outline-none focus:ring-2"
-                    style={{ 
-                      borderColor: 'var(--mid-gray)', 
-                      backgroundColor: 'var(--light-gray)',
-                      color: 'var(--dark-charcoal)'
-                    }}
                     value={jobType}
-                    onChange={(e) => setJobType(e.target.value)}
+                    onChange={(option) => setJobType(option)}
+                    options={jobTypeOptions}
+                    className="react-select-container"
+                    classNamePrefix="react-select"
+                    styles={{
+                      control: (base) => ({
+                        ...base,
+                        backgroundColor: 'var(--light-gray)',
+                        borderColor: 'var(--mid-gray)',
+                        borderRadius: '0.75rem',
+                        padding: '0.375rem 0.5rem',
+                        minHeight: '3rem',
+                        boxShadow: 'none',
+                        '&:hover': {
+                          borderColor: 'var(--mid-gray)',
+                        },
+                      }),
+                      menu: (base) => ({
+                        ...base,
+                        backgroundColor: 'var(--off-white)',
+                        borderRadius: '0.5rem',
+                        border: '1px solid var(--mid-gray)',
+                      }),
+                      option: (base, state) => ({
+                        ...base,
+                        backgroundColor: state.isFocused ? 'var(--light-gray)' : 'var(--off-white)',
+                        color: 'var(--dark-charcoal)',
+                        cursor: 'pointer',
+                        '&:active': {
+                          backgroundColor: 'var(--light-gray)',
+                        },
+                      }),
+                      singleValue: (base) => ({
+                        ...base,
+                        color: 'var(--dark-charcoal)',
+                      }),
+                    }}
+                  />
+                </div>
+
+                <div></div>
+                
+                <div>
+                  <label 
+                    htmlFor="currency" 
+                    className="block text-sm font-medium mb-2"
+                    style={{ color: 'var(--dark-charcoal)' }}
                   >
-                    <option value="fixed">Fixed Price</option>
-                    <option value="hourly">Hourly Rate</option>
-                  </select>
+                    Currency *
+                  </label>
+                  <Select
+                    id="currency"
+                    value={currency}
+                    onChange={(option) => setCurrency(option)}
+                    options={currencyOptions}
+                    className="react-select-container"
+                    classNamePrefix="react-select"
+                    styles={{
+                      control: (base) => ({
+                        ...base,
+                        backgroundColor: 'var(--light-gray)',
+                        borderColor: 'var(--mid-gray)',
+                        borderRadius: '0.75rem',
+                        padding: '0.375rem 0.5rem',
+                        minHeight: '3rem',
+                        boxShadow: 'none',
+                        '&:hover': {
+                          borderColor: 'var(--mid-gray)',
+                        },
+                      }),
+                      menu: (base) => ({
+                        ...base,
+                        backgroundColor: 'var(--off-white)',
+                        borderRadius: '0.5rem',
+                        border: '1px solid var(--mid-gray)',
+                      }),
+                      option: (base, state) => ({
+                        ...base,
+                        backgroundColor: state.isFocused ? 'var(--light-gray)' : 'var(--off-white)',
+                        color: 'var(--dark-charcoal)',
+                        cursor: 'pointer',
+                        '&:active': {
+                          backgroundColor: 'var(--light-gray)',
+                        },
+                      }),
+                      singleValue: (base) => ({
+                        ...base,
+                        color: 'var(--dark-charcoal)',
+                      }),
+                    }}
+                  />
                 </div>
 
                 <div>
@@ -368,7 +520,7 @@ export default function PostJob() {
                     className="block text-sm font-medium mb-2"
                     style={{ color: 'var(--dark-charcoal)' }}
                   >
-                    Budget ($) *
+                    Budget *
                   </label>
                   <input
                     type="number"
@@ -389,6 +541,62 @@ export default function PostJob() {
                 </div>
               </div>
 
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label 
+                    htmlFor="startDate" 
+                    className="block text-sm font-medium mb-2"
+                    style={{ color: 'var(--dark-charcoal)' }}
+                  >
+                    Start Date
+                  </label>
+                  <input
+                    type="date"
+                    id="startDate"
+                    className="w-full px-4 py-3 rounded-xl border outline-none focus:ring-2"
+                    style={{ 
+                      borderColor: 'var(--mid-gray)', 
+                      backgroundColor: 'var(--light-gray)',
+                      color: 'var(--dark-charcoal)'
+                    }}
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <label 
+                    htmlFor="endDate" 
+                    className="block text-sm font-medium mb-2"
+                    style={{ color: 'var(--dark-charcoal)' }}
+                  >
+                    End Date
+                  </label>
+                  <input
+                    type="date"
+                    id="endDate"
+                    min={startDate || undefined}
+                    className="w-full px-4 py-3 rounded-xl border outline-none focus:ring-2"
+                    style={{ 
+                      borderColor: 'var(--mid-gray)', 
+                      backgroundColor: 'var(--light-gray)',
+                      color: 'var(--dark-charcoal)'
+                    }}
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                  />
+                </div>
+              </div>
+              </div>
+              </div>
+
+              {/* Requirements Section */}
+              <div className="space-y-4">
+                <h3 className="text-xl font-semibold" style={{ color: 'var(--dark-charcoal)' }}>
+                  Requirements
+                </h3>
+
+              <div className="ml-4 space-y-4">
               <div className="relative">
                 <label 
                   htmlFor="location" 
@@ -461,51 +669,7 @@ export default function PostJob() {
                   onChange={(e) => setRequiredSkills(e.target.value)}
                 />
               </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label 
-                    htmlFor="startDate" 
-                    className="block text-sm font-medium mb-2"
-                    style={{ color: 'var(--dark-charcoal)' }}
-                  >
-                    Start Date
-                  </label>
-                  <input
-                    type="date"
-                    id="startDate"
-                    className="w-full px-4 py-3 rounded-xl border outline-none focus:ring-2"
-                    style={{ 
-                      borderColor: 'var(--mid-gray)', 
-                      backgroundColor: 'var(--light-gray)',
-                      color: 'var(--dark-charcoal)'
-                    }}
-                    value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
-                  />
-                </div>
-
-                <div>
-                  <label 
-                    htmlFor="endDate" 
-                    className="block text-sm font-medium mb-2"
-                    style={{ color: 'var(--dark-charcoal)' }}
-                  >
-                    End Date
-                  </label>
-                  <input
-                    type="date"
-                    id="endDate"
-                    className="w-full px-4 py-3 rounded-xl border outline-none focus:ring-2"
-                    style={{ 
-                      borderColor: 'var(--mid-gray)', 
-                      backgroundColor: 'var(--light-gray)',
-                      color: 'var(--dark-charcoal)'
-                    }}
-                    value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
-                  />
-                </div>
+              </div>
               </div>
 
               <button

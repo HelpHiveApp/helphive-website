@@ -42,6 +42,11 @@ export default function PostJob() {
   const [currencyOptions, setCurrencyOptions] = useState<{ value: string; label: string }[]>([]);
   const [currencyData, setCurrencyData] = useState<Map<string, { service_fee: number; discount: number }>>(new Map());
   const [location, setLocation] = useState('');
+  const [city, setCity] = useState<string | null>(null);
+  const [country, setCountry] = useState<string | null>(null);
+  const [countryCode, setCountryCode] = useState<string | null>(null);
+  const [latitude, setLatitude] = useState<number | null>(null);
+  const [longitude, setLongitude] = useState<number | null>(null);
   const [requiredSkills, setRequiredSkills] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -200,10 +205,52 @@ export default function PostJob() {
     setLocation(value);
   };
 
+  const fetchPlaceDetails = async (placeId: string) => {
+    try {
+      const response = await axios.post(
+        'https://ybosoitfbowwbuanusvs.functions.supabase.co/get-google-places-key/place-details',
+        { user_id: getCurrentUserEmail() },
+        {
+          params: { place_id: placeId },
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlib3NvaXRmYm93d2J1YW51c3ZzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ0ODA3NTUsImV4cCI6MjA3MDA1Njc1NX0.9-fywVUxM7MMN6yeIBircmi1pdC56Fib1voE_cILbJw',
+          },
+        }
+      );
+
+      if (response.status === 200 && response.data) {
+        const data = response.data;
+        const lat = data.lat as number | undefined;
+        const lng = data.lng as number | undefined;
+        const cityData = data.city as string | undefined;
+        const countryData = data.country as string | undefined;
+        const countryCodeData = data.country_code as string | undefined;
+
+        if (lat != null && lng != null) {
+          setLatitude(lat);
+          setLongitude(lng);
+          setCity(cityData || null);
+          setCountry(countryData || null);
+          setCountryCode(countryCodeData || null);
+          
+          console.log('Place details fetched:');
+          console.log('  City:', cityData);
+          console.log('  Country:', countryData, '(', countryCodeData, ')');
+          console.log('  Coordinates:', lat, ',', lng);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching place details:', error);
+    }
+  };
+
   const handlePredictionSelect = (prediction: PlacePrediction) => {
     setLocation(prediction.description);
     setShowPredictions(false);
     setPredictions([]);
+    // Fetch place details for the selected prediction
+    fetchPlaceDetails(prediction.place_id);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -237,6 +284,11 @@ export default function PostJob() {
         budget: parseFloat(budget),
         currency_code: selectedCurrency,
         location: location.trim() || null,
+        city: city,
+        country: country,
+        latitude: latitude,
+        longitude: longitude,
+        country_id: countryCode,
         required_skills: requiredSkills 
           ? requiredSkills.split(',').map(skill => skill.trim()).filter(skill => skill.length > 0)
           : [],

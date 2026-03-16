@@ -12,6 +12,11 @@ interface JobData {
   budget: number;
   currency_code: string;
   location: string | null;
+  city: string | null;
+  country: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  country_id: string | null;
   required_skills: string[];
   start_date: string | null;
   end_date: string | null;

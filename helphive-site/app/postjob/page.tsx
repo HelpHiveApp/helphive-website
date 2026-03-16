@@ -40,6 +40,7 @@ export default function PostJob() {
   const [budget, setBudget] = useState('');
   const [currency, setCurrency] = useState<{ value: string; label: string } | null>(null);
   const [currencyOptions, setCurrencyOptions] = useState<{ value: string; label: string }[]>([]);
+  const [currencyData, setCurrencyData] = useState<Map<string, { service_fee: number; discount: number }>>(new Map());
   const [location, setLocation] = useState('');
   const [requiredSkills, setRequiredSkills] = useState('');
   const [startDate, setStartDate] = useState('');
@@ -82,7 +83,7 @@ export default function PostJob() {
       try {
         const { data, error } = await supabase
           .from('currency_rates')
-          .select('currency_code, country_code')
+          .select('currency_code, country_code, service_fee, discount')
           .order('currency_code', { ascending: true });
 
         if (error) {
@@ -96,12 +97,27 @@ export default function PostJob() {
           ];
           setCurrencyOptions(defaultOptions);
           setCurrency(defaultOptions[0]);
+          // Set default currency data with 0 values
+          const dataMap = new Map();
+          dataMap.set('USD', { service_fee: 0, discount: 0 });
+          setCurrencyData(dataMap);
         } else if (data) {
           const options = data.map((rate: any) => ({
             value: rate.currency_code,
             label: `${countryCodeToFlag(rate.country_code)} ${rate.currency_code}`
           }));
           setCurrencyOptions(options);
+          
+          // Store service_fee and discount data
+          const dataMap = new Map();
+          data.forEach((rate: any) => {
+            dataMap.set(rate.currency_code, {
+              service_fee: rate.service_fee || 0,
+              discount: rate.discount || 0
+            });
+          });
+          setCurrencyData(dataMap);
+          
           // Set default to USD or first option
           const usdOption = options.find(opt => opt.value === 'USD');
           setCurrency(usdOption || options[0]);
@@ -211,12 +227,15 @@ export default function PostJob() {
       }
 
       // Prepare job data for Supabase
+      const selectedCurrency = currency?.value || 'USD';
+      const currencyInfo = currencyData.get(selectedCurrency) || { service_fee: 0, discount: 0 };
+      
       const jobData = {
         title: title.trim(),
         description: description.trim(),
         job_type: (jobType?.value || 'fixed') as 'fixed' | 'hourly',
         budget: parseFloat(budget),
-        currency_code: currency?.value || 'USD',
+        currency_code: selectedCurrency,
         location: location.trim() || null,
         required_skills: requiredSkills 
           ? requiredSkills.split(',').map(skill => skill.trim()).filter(skill => skill.length > 0)
@@ -224,29 +243,34 @@ export default function PostJob() {
         start_date: startDate || null,
         end_date: endDate || null,
         poster_id: session.user.id,
-        status: 'open' as const
+        status: 'open' as const,
+        service_fee: currencyInfo.service_fee,
+        discount: currencyInfo.discount
       };
 
       console.log('Submitting job data:', jobData);
 
-      // Insert job into Supabase
-      const { data, error: supabaseError } = await supabase
-        .from('jobs')
-        .insert([jobData])
-        .select()
-        .single();
+      // Insert job into Supabase - COMMENTED OUT: Will be done after checkout
+      // const { data, error: supabaseError } = await supabase
+      //   .from('jobs')
+      //   .insert([jobData])
+      //   .select()
+      //   .single();
 
-      if (supabaseError) {
-        console.error('Supabase error:', supabaseError);
-        setError('Failed to create job posting. Please try again.');
-        setIsLoading(false);
-        return;
-      }
+      // if (supabaseError) {
+      //   console.error('Supabase error:', supabaseError);
+      //   setError('Failed to create job posting. Please try again.');
+      //   setIsLoading(false);
+      //   return;
+      // }
 
-      console.log('Job created successfully:', data);
+      // console.log('Job created successfully:', data);
       
-      // Redirect to available jobs page on success
-      router.push('/availablejobs');
+      // Store ALL job data in sessionStorage for checkout page
+      sessionStorage.setItem('checkoutJobData', JSON.stringify(jobData));
+      
+      // Redirect to checkout page
+      router.push('/checkout?from=postjob');
       
     } catch (error) {
       console.error('Error creating job:', error);

@@ -6,6 +6,7 @@ interface Job {
   description: string;
   job_type: 'fixed' | 'hourly';
   budget: number;
+  currency_code?: string;
   location?: string;
   required_skills?: string[];
   start_date?: string;
@@ -67,18 +68,14 @@ export default function JobCard({ job, onApply }: JobCardProps) {
     }
   };
 
-  const formatBudget = (budget: number, jobType: string) => {
-    const formatter = new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    });
+  const formatBudget = (budget: number, jobType: string, currencyCode?: string) => {
+    const currency = currencyCode || 'USD';
+    const formattedAmount = budget.toFixed(0);
     
     if (jobType === 'hourly') {
-      return `${formatter.format(budget)}/hr`;
+      return `${currency} ${formattedAmount}/hr`;
     } else {
-      return formatter.format(budget);
+      return `${currency} ${formattedAmount}`;
     }
   };
 
@@ -161,7 +158,7 @@ export default function JobCard({ job, onApply }: JobCardProps) {
       <div className="flex justify-between items-center">
         <div>
           <span className="text-sm font-bold" style={{ color: 'var(--primary)' }}>
-            {formatBudget(job.budget, job.job_type)}
+            {formatBudget(job.budget, job.job_type, job.currency_code)}
           </span>
         </div>
         <button

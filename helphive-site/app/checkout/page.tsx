@@ -190,9 +190,12 @@ function CheckoutContent() {
                   className="p-6 rounded-xl"
                   style={{ backgroundColor: 'var(--light-gray)' }}
                 >
-                  <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--dark-charcoal)' }}>
+                  <h3 className="text-xl font-semibold mb-0" style={{ color: 'var(--dark-charcoal)' }}>
                     Payment Breakdown
                   </h3>
+                    <h4 className="text-sm mb-4" style={{ color: 'var(--mid-gray)' }}>
+                    (Payable when job is awarded to a helper, not when job is posted.)
+                    </h4>
                   <div className="space-y-3 mb-4">
                     <div className="flex justify-between">
                       <span style={{ color: 'var(--mid-gray)' }}>Budget:</span>

@@ -2,7 +2,7 @@
   {
     "relation": ["delegate_permission/common.handle_all_urls"],
     "target": {
-      "namespace": "com.helphiveapp.helphive",
+      "namespace": "android_app",
       "package_name": "com.helphiveapp.helphive",
       "sha256_cert_fingerprints": [
         "F0:0C:8B:FA:67:75:F5:5F:6C:EA:46:C8:17:3E:3A:C0:29:D9:E5:36:16:AA:B3:26:08:52:38:91:8F:15:95:36"

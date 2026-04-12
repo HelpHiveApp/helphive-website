@@ -1,0 +1,22 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": [
+          "TEAM_ID.YOUR_BUNDLE_IDENTIFIER"
+        ],
+        "components": [
+          {
+            "/": "/reset-password/*",
+            "comment": "Matches any URL with path starting with /reset-password/"
+          }
+        ]
+      }
+    ]
+  },
+  "webcredentials": {
+    "apps": [
+      "TEAM_ID.YOUR_BUNDLE_IDENTIFIER"
+    ]
+  }
+}

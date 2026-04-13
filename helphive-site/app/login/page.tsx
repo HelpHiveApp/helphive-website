@@ -159,7 +159,7 @@ export default function Login() {
                   </span>
                 </label>
                 <a 
-                  href="#" 
+                  href="/auth/forgot-password" 
                   className="text-sm hover:underline pointer-events-auto"
                   style={{ color: 'var(--primary)' }}
                 >

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { HexBackground } from '@/components/ui/hex-background';
 
@@ -59,21 +58,8 @@ export default function Signup() {
         return;
       }
 
-      setSuccess('Account created successfully! Signing you in...');
-      
-      // Automatically sign in the user after successful registration
-      const result = await signIn('credentials', {
-        email,
-        password,
-        redirect: false,
-      });
-
-      if (result?.error) {
-        setError('Account created but failed to sign in. Please try logging in manually.');
-      } else {
-        // Redirect to available jobs page on successful login
-        router.push('/availablejobs');
-      }
+      // Redirect to check-email page instead of auto-signing in
+      router.push(`/auth/check-email?email=${encodeURIComponent(email)}`);
     } catch (error) {
       setError('An error occurred. Please try again.');
     } finally {

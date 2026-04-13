@@ -2,8 +2,9 @@
 
 import { HexBackground } from '@/components/ui/hex-background';
 import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 
-export default function CheckEmail() {
+function CheckEmailContent() {
   const searchParams = useSearchParams();
   const email = searchParams.get('email') || 'your inbox';
 
@@ -124,5 +125,28 @@ export default function CheckEmail() {
         </main>
       </div>
     </div>
+  );
+}
+
+export default function CheckEmail() {
+  return (
+    <Suspense fallback={
+      <div className="relative w-full">
+        <div className="absolute inset-0 z-0 h-full w-full">
+          <HexBackground
+            hexagonSize={75}
+            hexagonMargin={4}
+            className="w-full min-h-full"
+          />
+        </div>
+        <div className="relative z-10 min-h-screen flex items-center justify-center">
+          <div className="text-center" style={{ color: 'var(--dark-charcoal)' }}>
+            Loading...
+          </div>
+        </div>
+      </div>
+    }>
+      <CheckEmailContent />
+    </Suspense>
   );
 }
